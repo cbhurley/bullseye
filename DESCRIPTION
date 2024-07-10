@@ -1,0 +1,32 @@
+Package: bullseye
+Title: Visualising multiple pairwise variable correlations and other scores
+Version: 0.1.0
+Authors@R: 
+    c(person(given = "Amit", family = "Chinwan", email = "amit.chinwan.2019@mumail.ie", role = c("aut")),
+    person(given = "Catherine", family = "Hurley", email = "catherine.hurley@mu.ie", role = c("aut", "cre")))
+Description: We provide a tidy data structure and visualisations for multiple or grouped  variable correlations, 
+    general association measures and other pairwise scores  suitable for numerical, ordinal and nominal variables.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports: 
+    stats,
+    dplyr,
+    cli,
+    rlang,
+    ggplot2,
+    labeling,
+    ggiraph,
+    DendSer,
+     tidyr
+Suggests: 
+    DescTools,
+    acepack,
+    energy,
+    linkspotter,
+    minerva,
+    polycor,
+    scagnostics,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

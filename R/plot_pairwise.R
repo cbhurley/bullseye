@@ -1,0 +1,283 @@
+
+#' Pairwise plot in a matrix layout
+#'
+#' Plots multiple pairwise variable scores in a matrix layout.
+#'
+#' @param scores The scores for the  matrix plot. Either of class `pairwise` or can be converted to class pairwise with function `pairwise_score`.
+#' @param var_order The variable order to be used. The default NULL means variables in are ordered alphabetically. A value of  
+#' "seriate_max" means variables are re-ordered to emphasize pairs with maximum scores. A value of "seriate_max_diff" means 
+#' variables are re-ordered to emphasize pairs with maximum score differences. Otherwise Var_order must be a subset of variables in scores.
+#' @param score_limits a numeric vector of length specifying the limits of the scale. 
+#' @param inner_width A number between 0 and 1 specifying radius of the inner bullseye.
+#' @param interactive defaults to FALSE
+#' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
+#' 
+#' If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values. If some rows have `by=overall`, then the glyph is drawn as a bullseye.
+#' @examples
+#' plot_pairwise(pair_scores(iris))
+#' plot_pairwise(pair_scores(iris,by="Species"))
+#' plot_pairwise(pair_all(iris))
+
+#' @export
+
+plot_pairwise <- function(scores, var_order="seriate_max_diff", score_limits=NULL, inner_width=.5,interactive=FALSE){
+  
+  
+  prep <- plot_pairwise_prep(scores, score_limits, var_order=var_order)
+  scores <- prep$scores
+  score_limits <- prep$score_limits
+  var_order <- prep$var_order
+  score_label <- prep$score_label
+  
+  if (grepl("seriate", var_order)) {
+    serfn <- if (var_order == "seriate_max_diff")
+      function(x) diff(range(x)) else max
+    m <- pairwise_to_matrix(scores, serfn)
+    o <- DendSer::dser(stats::as.dist(-m), cost = DendSer::costLPL)
+    var_order <- rownames(m)[o]
+  }
+  scores$x <- factor(scores$x, levels=var_order)
+  scores$y <- factor(scores$y, levels=var_order)
+  
+  scores2 <- scores
+  names(scores2)[1:2] <- names(scores2)[2:1]
+  scores <- rbind(scores, scores2)
+  
+  if ("group" %in% names(scores)){
+    overall <- scores[scores$group =="all",]
+    scores <- scores[scores$group !="all",]
+    if (nrow(overall) == 0) overall <- NULL 
+  }
+  else overall <- NULL
+  
+  
+  diag_df <- scores[1:length(var_order),]
+  diag_df$x <- diag_df$y <- factor(var_order, levels=var_order)
+  diag_df$value <- NA
+  diag_df$text <- diag_df$x
+  scores$text <- NA
+  scores_diag <- rbind(scores, diag_df)
+  
+  p <- ggplot(scores_diag) +
+    facet_grid(ggplot2::vars(.data$x), ggplot2::vars(.data$y)) +
+    geom_text(data=diag_df,aes(x=0.05,y=.5,label=.data$text),size=3)+
+    theme_void()+
+    theme(
+      panel.background = element_rect(fill="white", color="grey"),
+      legend.position = "bottom",
+      strip.text.y = element_blank(),
+      strip.text.x = element_blank(),
+      panel.spacing = unit(0,'pt'),
+      aspect.ratio = 1
+    )
+  
+  scoreslocal <- dplyr::mutate(scores, ytemp= .data$n/sum(.data$n),
+                               .by=dplyr::all_of(c("x","y")),
+                      boundaries = dplyr::case_when(.data$ytemp == 1 ~ NA_character_ , .default="grey50"))
+
+  if (!is.null(overall)){
+    overalllocal <- dplyr::mutate(overall, ytemp= .data$n/sum(.data$n),.by=dplyr::all_of(c("x","y")),
+                          boundaries = dplyr::case_when(.data$ytemp == 1 ~ NA_character_ , .default="grey50"))
+    ord <- order(unique(paste(scoreslocal$score,scoreslocal$group, scoreslocal$value)))
+    
+    scoreslocal$tooltip <- factor(scoreslocal$tooltip, levels = unique(scoreslocal$tooltip)[ord])
+    
+    cr <- coord_radial(theta="y",inner.radius=.5, expand=FALSE)
+    cr$default<- TRUE
+    p <- p+
+      ggiraph::geom_col_interactive(data=scoreslocal,
+                                    aes(x=inner_width, y=.data$ytemp, fill=.data$value, color=.data$boundaries,
+                                        tooltip=.data$tooltip),
+                                   width=1- inner_width,just=0)+
+      cr+
+      ggiraph::geom_col_interactive(data=overalllocal,
+                                    aes(x=0,y=.data$ytemp, fill=.data$value, color=.data$boundaries,
+                                        tooltip=.data$tooltip), width= inner_width,just=0)
+  }
+  else p <- p+
+    ggiraph::geom_col_interactive(data=scoreslocal,
+                                  aes(x=0, y=.data$ytemp, fill=.data$value, color=.data$boundaries,
+                                      tooltip=.data$tooltip),
+                                  width=.5,just=0)
+  
+  p <- p+ scale_fill_gradient2(low="#2166ac", mid="white", high="#b2182b",
+                          na.value=NA,limits=score_limits, midpoint=mean(score_limits)) +
+    scale_color_identity()+ coord_polar(theta="y") +labs(fill = score_label)
+  if (interactive) ggiraph::girafe(ggobj=p) else p
+  
+}
+
+plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore_n =FALSE, matrix=TRUE){
+   
+  mscore <- length(unique(scores$score)) >1
+  mgroup <- length(unique(scores$group)) >1
+  if (mscore)  score_label <- "scores" 
+  else score_label <- unique(scores$score)
+  
+  if (mscore & mgroup)
+      scores[[score_label]] <- paste(scores$group,scores$score)
+   else if (mgroup)
+     scores[[score_label]] <- scores$group
+   else  scores[[score_label]] <- scores$score
+  
+  scores$tooltip <- paste(scores[[score_label]],round(scores$value,2), sep="=")
+  
+  if (!("n" %in% names(scores))) scores$n <- 1
+  if (ignore_n) scores$n <- 1
+  
+  if (is.null(score_limits)) {
+    if (all(scores$value >= 0) & all(scores$value <= 1))
+      score_limits <- c(0,1)
+    else if (all(scores$value >= -1) & all(scores$value <= 1))
+      score_limits <- c(-1,1)
+    else {
+      score_limits <- range(scores$value, na.rm=TRUE)
+      score_limits <- range(labeling::rpretty(score_limits[1], score_limits[2]))
+    }
+  }
+  
+  if (isTRUE(matrix)){
+  allvars <- unique(c(scores$x, scores$y))
+  if (is.null(var_order))
+    var_order <- sort(allvars)
+  else if (!grepl("seriate", var_order)) {
+    if (length(intersect(allvars, var_order) ==0))
+      stop("'var_order' must be NULL, 'seriate_max',  'seriate_max_diff' or a subset of the x and y variables in 'scores'")
+    else {
+      scores <- scores[scores$x %in% var_order & scores$y %in% var_order,]
+    }
+  }
+  list(scores=scores, var_order=var_order, score_limits=score_limits, score_label=score_label)
+  }
+  else list(scores=scores, score_limits=score_limits,score_label=score_label)
+}
+
+
+pairwise_to_matrix <- function(scores, stat=function(x) diff(range(x))){
+  allvars <- unique(c(scores$x, scores$y))
+  
+  scores1 <- dplyr::summarise(scores, 
+                              n = dplyr::n(),
+                              measure= if (.data$n > 1) stat(.data$value) else .data$value,
+                              .by=dplyr::all_of(c("x","y")))
+  
+  m <- matrix(0, nrow=length(allvars), ncol=length(allvars))
+  rownames(m)<- colnames(m)<- allvars
+  m[cbind(scores1$x,scores1$y)]<- m[cbind(scores1$y,scores1$x)]<-scores1$measure
+  m
+}
+
+
+#' Pairwise plot in a linear layout
+#'
+#' Plots the calculated measures of association among different variable pairs for a dataset in a linear layout.
+#'
+#' @param scores A tibble with the calculated association measures for the  matrix plot.
+#' Must be of class `pairwise`, or can be converted to class `pairwise`.
+#' @param pair_order The variable pair order to be used. The default NULL means pairs are in order of their first appearance in `scores`. A value of  
+#' "seriate_max" means pairs are in order of maximum scores. A value of "seriate_max_diff" means 
+#' pairs are in order of maximum scores difference.
+#' @param geom The geom to be used. Should be point or tile.
+#' @param score_limits a numeric vector of length specifying the limits of the scale. 
+#' @param na.value used for geom_tile with a value of NA
+#' @param interactive defaults to FALSE
+#' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
+#' 
+#' @examples
+#' plot_pairwise_linear(pair_scores(iris))
+#' plot_pairwise_linear(pair_scores(iris,by="Species"))
+#' plot_pairwise_linear(pair_all(iris))
+#' @export
+#' 
+
+
+
+plot_pairwise_linear <- function(scores,
+                              pair_order = "seriate_max_diff",
+                              geom = c("tile","point"),
+                              score_limits=NULL, 
+                              na.value = "grey80",
+                              interactive=FALSE){
+  
+  geom <- match.arg(geom)
+  
+  prep <- plot_pairwise_prep(scores, score_limits, matrix=FALSE)
+  scores <- prep$scores
+  score_limits <- prep$score_limits
+  score_label <- prep$score_label
+  
+  if (all(sapply(2:nrow(scores), function(i) scores$x[1] %in% scores[i, c(1,2)])))
+    scores$xy <- unlist(sapply(1:nrow(scores), function(i) setdiff(scores[i, c(1,2)], scores$x[1])))
+   else if (all(sapply(2:nrow(scores), function(i) scores$y[1] %in% scores[i, c(1,2)])))
+    scores$xy <- unlist(sapply(1:nrow(scores), function(i) setdiff(scores[i, c(1,2)], scores$y[1])))
+  else scores$xy <- paste0(scores$x, sep=":", scores$y)
+  
+  
+  if (grepl("seriate", pair_order)){
+    serfn <- if (pair_order == "seriate_max_diff")
+      function(x) diff(range(x)) else max
+    ord <- dplyr::summarise(scores,
+                     n = dplyr::n(),
+                     measure= if (.data$n > 1) serfn(.data$value)  else .data$value,
+                     .by=dplyr::all_of(c("xy"))) |> dplyr::arrange(dplyr::desc(.data$measure)) |> dplyr::pull(.data$xy)
+    scores$xy <- factor(scores$xy, levels=ord)
+  } 
+  
+  mscore <- length(unique(scores[[score_label]])) >1
+  if (geom == "tile"){
+    levs <- arrange_tiles_x(scores, score_label)
+    print(score_limits)
+    scores[[score_label]] <- factor(scores[[score_label]], levels=levs)
+    
+    p <- ggplot(scores) +
+       ggiraph::geom_tile_interactive(aes(x=.data[[score_label]],y=.data$xy,fill=.data$value,
+                                tooltip=.data$tooltip)) +
+      scale_fill_gradient2(low="#2166ac", mid="white", high="#b2182b",na.value=na.value,limits=score_limits) +
+      scale_x_discrete(position = "top", breaks=if (!mscore) NULL else waiver(), expand=c(0,0)) +
+      scale_y_discrete(limits=rev, expand=c(0,0)) +
+      labs(fill = score_label)+
+       theme(panel.background = element_rect(fill=na.value, color=na.value),
+            axis.title.x = element_blank(),
+                     axis.text.x = element_text(angle = 45, hjust = 0, vjust = 0),
+                     axis.text = element_text(size = 8),
+                     panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank()
+            )
+    
+  } else {
+    
+    p <-  ggplot(scores) +
+       {if (identical(score_limits, c(-1,1))) geom_hline(yintercept = 0, color="grey40")} +
+      ggiraph::geom_point_interactive(aes(x=.data$xy,y=.data$value,colour=.data$score, 
+                   tooltip=.data$tooltip),
+                   show.legend = mscore) +
+      ylim(score_limits[1],score_limits[2]) +
+      coord_flip() +scale_x_discrete(limits=rev) +
+      labs(y = score_label)
+  }
+  p <- p+ theme(legend.position="bottom", axis.title.y  = element_blank())
+  if (interactive) ggiraph::girafe(ggobj=p) else p
+}
+
+
+arrange_tiles_x <- function(scores, score_label){
+  unique(scores) |> 
+    tidyr::pivot_wider(id_cols = c("x","y"),names_from = dplyr::all_of(score_label), 
+                       values_from = dplyr::all_of("value") ) |> 
+    dplyr::select(-(1:2)) -> d
+  if (ncol(d)==1)
+    names(d)
+  else{
+    dnames <- names(d)
+    ov <- grep("all", dnames)
+    dnames[ov] <- paste("000",dnames[ov])
+    d <- d[,order(dnames)]
+    d1 <- t(0+is.na(as.matrix(d)))
+    if (length(unique(scores$group)) > 1) {
+    word1 <- sub(" .*", "",rownames(d1))
+    d1 <- d1+  match(word1, unique(word1))*10
+    }
+    o <- DendSer::dser(stats::dist(d1, method="manhattan"), ser_weight = rowSums(d1),cost = DendSer::costLS)
+    names(d)[o]
+  }
+}
