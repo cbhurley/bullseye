@@ -9,7 +9,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%",
   warning = FALSE,
   message = FALSE
 )
@@ -35,17 +34,35 @@ You can install the development version of bullseye from [GitHub](https://github
 
 ## Build a `pairwise` data structure
 
-```{r, eval=F}
-irisc <- pair_scores(iris, by = "Species") 
+```{r}
+library(bullseye)
+irisc <- pairwise_scores(iris, by = "Species") 
 irisc
 ```
 
 This calculates correlations for every level of species in the data.
 
+For other methods for calculating pairwise variable scores see the  vignette "Calculating pairwise scores using bullseye".
+
 
 ## Visualise the correlations
 
-```{r, eval=F}
+```{r vis1, fig.height=5.5, fig.width=5}
 plot_pairwise(irisc)
 ```
 
+The glyph shows the overall or ungrouped correlation in the center, and the grouped correlations in the wedges. These are setosa, versicolor, virginica starting from the top and going anti-clockwise. Use 
+
+```{r , eval=F}
+plot_pairwise(irisc, interactive=TRUE)
+```
+
+to see the groups represented by the wedges.  The ungrouped Pearson correlation of Sepal.Width with the other three variables is negative, but the correlations for each of the Species is positive. 
+
+A second visualisation is offered also:
+
+```{r vis2, fig.height=5.5, fig.width=5}
+plot_pairwise_linear(irisc)
+```
+
+For more visualisation examples  see the  vignette "Visualising pairwise scores using bullseye".

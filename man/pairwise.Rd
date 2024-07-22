@@ -4,16 +4,19 @@
 \alias{pairwise}
 \alias{pairwise.matrix}
 \alias{pairwise.data.frame}
+\alias{as.pairwise}
 \title{A generic function to create a data structure for every variable pair in a dataset}
 \usage{
-pairwise(data, score = "?", pair_type = "?")
+pairwise(x, score = NA_character_, pair_type = NA_character_)
 
-\method{pairwise}{matrix}(data, score = "?", pair_type = "?")
+\method{pairwise}{matrix}(x, score = NA_character_, pair_type = NA_character_)
 
-\method{pairwise}{data.frame}(data, score = NA_character_, pair_type = NA_character_)
+\method{pairwise}{data.frame}(x, score = NA_character_, pair_type = NA_character_)
+
+as.pairwise(x, score = NA_character_, pair_type = NA_character_)
 }
 \arguments{
-\item{data}{A dataframe.}
+\item{x}{A dataframe or symmetric matrix.}
 
 \item{score}{a character string indicating the value of association.}
 
@@ -31,6 +34,11 @@ Creates a data structure for every variable pair in a dataset.
 \item \code{pairwise(matrix)}: pairwise method
 
 \item \code{pairwise(data.frame)}: pairwise method
+
+}}
+\section{Functions}{
+\itemize{
+\item \code{as.pairwise()}: Same as \code{pairwise}
 
 }}
 \examples{

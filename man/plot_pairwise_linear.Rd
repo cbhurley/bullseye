@@ -6,8 +6,9 @@
 \usage{
 plot_pairwise_linear(
   scores,
-  pair_order = "seriate_max_diff",
+  pair_order = "seriate_max",
   geom = c("tile", "point"),
+  add_lines = FALSE,
   score_limits = NULL,
   na.value = "grey80",
   interactive = FALSE
@@ -15,13 +16,15 @@ plot_pairwise_linear(
 }
 \arguments{
 \item{scores}{A tibble with the calculated association measures for the  matrix plot.
-Must be of class \code{pairwise}, or can be converted to class \code{pairwise}.}
+Either of class \code{pairwise} or identical in structure to object of class \code{pairwise}.}
 
 \item{pair_order}{The variable pair order to be used. The default NULL means pairs are in order of their first appearance in \code{scores}. A value of
-"seriate_max" means pairs are in order of maximum scores. A value of "seriate_max_diff" means
+"seriate_max" means pairs are in order of  maximum absolute scores. A value of "seriate_max_diff" means
 pairs are in order of maximum scores difference.}
 
-\item{geom}{The geom to be used. Should be point or tile.}
+\item{geom}{The geom to be used. Should be "point" or "tile".}
+
+\item{add_lines}{When geom= "point" is used, should the points be connected by lines? Defaults to FALSE.}
 
 \item{score_limits}{a numeric vector of length specifying the limits of the scale.}
 
@@ -38,5 +41,5 @@ Plots the calculated measures of association among different variable pairs for 
 \examples{
 plot_pairwise_linear(pair_scores(iris))
 plot_pairwise_linear(pair_scores(iris,by="Species"))
-plot_pairwise_linear(pair_all(iris))
+plot_pairwise_linear(pair_multi(iris), geom="point")
 }

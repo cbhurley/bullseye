@@ -19,14 +19,20 @@ Imports:
     labeling,
     ggiraph,
     DendSer,
-     tidyr
+    tidyr,
+    polycor
 Suggests: 
     DescTools,
     acepack,
     energy,
     linkspotter,
     minerva,
-    polycor,
     scagnostics,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    correlation,
+    palmerpenguins,
+    kableExtra
 Config/testthat/edition: 3
+VignetteBuilder: knitr

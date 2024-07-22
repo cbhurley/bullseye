@@ -2,7 +2,7 @@
 
 
 test_that("pair scores", {
-  p <- pair_scores(iris[c(1,2,53,55),])
+  p <- pairwise_scores(iris[c(1,2,53,55),])
   expect_s3_class(p, "pairwise")
   expect_identical(dim(p), c(10L,6L))
   p <- pair_scores(iris, by="Species")
