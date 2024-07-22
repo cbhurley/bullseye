@@ -26,7 +26,7 @@ You can install the development version of bullseye from
 
 ``` r
 library(bullseye)
-irisc <- pair_scores(iris, by = "Species") 
+irisc <- pairwise_scores(iris, by = "Species") 
 irisc
 #> # A tibble: 24 × 6
 #>    x            y            score   group      value pair_type
@@ -45,6 +45,9 @@ irisc
 ```
 
 This calculates correlations for every level of species in the data.
+
+For other methods for calculating pairwise variable scores see the
+vignette “Calculating pairwise scores using bullseye”.
 
 ## Visualise the correlations
 
@@ -73,3 +76,6 @@ plot_pairwise_linear(irisc)
 ```
 
 ![](man/figures/README-vis2-1.png)<!-- -->
+
+For more visualisation examples see the vignette “Visualising pairwise
+scores using bullseye”.

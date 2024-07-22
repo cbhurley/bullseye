@@ -1,0 +1,183 @@
+---
+title: "Calculating pairwise scores using bullseye."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Calculating pairwise scores using bullseye.}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`bullseye` is an R package which calculates measures of association and other scores for pairs of variables in a dataset and helps in visualising these measures in different layouts. The package also calculates and visualises the pairwise measures for different levels of a grouping variable. 
+
+This vignette gives an overview of how these pairwise variable measures  are calculated. Visualisations of these calculated measures are provided in the accompanying vignette.  
+
+
+```{r setup, message=FALSE}
+if (!requireNamespace("palmerpenguins", quietly = TRUE))
+  install.packages("palmerpenguins")
+
+library(bullseye)
+library(palmerpenguins)
+library(dplyr)
+```
+
+Table 1 lists the different measures of association provided in the package with the variable types they can be used with, the package used for calculation, the information on whether the measure is symmetric, and the minimum and maximum value of the measure.
+
+
+```{r,echo=FALSE}
+
+kableExtra::kbl(pair_methods,booktabs = T,caption = "List of the functions available in the package for calculating different association measures along with the packages used for calculation.") %>% kableExtra::kable_styling(latex_options = "scale_down")
+```
+
+
+## Calculating correlation and other association measures
+
+Each of the functions in the first column of Table 1 calculates pairwise scores for a dataset.
+
+```{r}
+sc_dcor <- pair_dcor(penguins)
+str(sc_dcor)
+```
+
+For example, we see that `pair_dcor` calculates the distance correlation for every pair of numeric variables in the `penguins` dataset. There are missing values in this dataset, all the `pair_` functions use pairwise complete observations by default.
+
+`sc_dcor` is a tibble of class `pairwise`, with the two variables in columns `x` and `y` (arranged in alphabetical order), calculated values in the column `value`, and the name of the score calculated in the column `score`. All of the variables are numeric, hence "nn" in the `pair_type` column.
+
+
+Similarly, one can use `pair_nmi` to calculate normalised mutual information for numeric, factor and mixed pairs of variables.
+```{r}
+sc_nmi <- pair_nmi(penguins)
+sc_nmi
+```
+The main difference here is that factor variables are included. In the `pair_type` column, "ff" and "fn" indicate factor-factor and factor-numeric pairs.
+
+If you want more control over the measure calculated, the function `pairwise_scores` calculates a different score depending on variable types. 
+
+```{r}
+pairwise_scores(penguins) |> distinct(score, pair_type)
+```
+As you can see, the default uses pearson's correlation for numeric pairs, and canonical correlation for factor-numeric or factor-factor pairs. In addition polychoric correlation is used for two ordered factors, but there are no ordered factors in this data. Alternative scores may be specified using the `control` argument to `pairwise_scores`.
+The default value for this `control` argument is given by
+
+```{r}
+pair_control()
+```
+
+
+## Calculating multiple measures
+
+
+
+If you want for instance to compare distance correlation and mutual information measures in a display,  two `pairwise` data structures can be combined:
+
+```{r}
+bind_rows(sc_dcor, sc_nmi) |> arrange(x,y)
+```
+
+We provide another function `pair_multi` which calculates multiple association measures for every variable pair in a dataset.
+By default this function combines the results of `pair_cor`, `pair_dcor`,`pair_mine`,`pair_ace`,
+                                    `pair_cancor`,`pair_nmi`,`pair_uncertainty`,
+                                    `pair_chi`, but any subset of the `pair_` functions may be supplied as an argument, as in the second example below.
+
+```{r}
+pair_multi(penguins)
+dcor_nmi <- pair_multi(penguins, c("pair_dcor", "pair_nmi"))
+```
+
+
+## Calculating grouped measures
+
+For each of the `pair_` functions, they can be wrapped using `pairwise_by` to build a score calculation for each level of a grouping variable. Of course, grouped scores could be calculated using `dplyr` machinery, but it is a bit more work.
+
+```{r}
+pairwise_by(penguins, by="species", pair_cor)
+```
+Use argument `ungrouped=FALSE` to suppress calculation of the ungrouped scores.
+
+`pairwise_scores` has a `by` argument, and provides pairwise scores for the levels of a grouping variable. 
+```{r}
+sc_sex <- pairwise_scores(penguins, by="species")
+```
+
+The column `group` now shows the levels of the grouping variable, along with "all" for ungrouped scores. Use `ungrouped=FALSE` to suppress calculation of the ungrouped scores.
+
+```{r}
+sc_sex |> distinct(group)
+```
+
+If you want to calculate different scores to the default, specify this via the `control` argument:
+
+```{r}
+pc <- pair_control(nn="pair_multi", nnargs= c("pair_dcor", "pair_ace"), fn=NULL, ff=NULL)
+sc_sex <- pairwise_scores(penguins, by="species", control=pc, ungrouped=FALSE) 
+```
+
+
+
+
+
+
+
+## Scagnostic measures
+
+The package `scagnostics` provides pairwise variable  scores based on graph-theoretic interestingness measures, for numeric variable pairs only.
+
+```{r}
+pair_scagnostics(penguins[,1:5], scagnostic=c("Stringy", "Clumpy"))
+```
+
+
+Note that the first two variables of the penguins data are non-numeric and so are ignored in the above calculation.
+
+For group-wise calculation:
+
+```{r}
+pairwise_by(penguins[,1:5], by="species",function(x) pair_scagnostics(x, scagnostic=c("Stringy", "Clumpy")))
+
+```
+
+## Converting symmetric matrices to `pairwise` and vice-versa.
+
+The conventional way of representing pairwise scores or correlations is via a numeric symmetric matrix.
+The tidy `pairwise` structure we use in `bullseye` is more flexible, and is amenable to multiple measures of association and grouped measures.
+
+It is straightforward to convert from a symmetric matrix to `pairwise`:
+
+```{r}
+x <- cor(penguins[, c("bill_length_mm", "bill_depth_mm" ,"flipper_length_mm" ,"body_mass_g")], 
+         use= "pairwise.complete.obs")
+pairwise(x, score="pearson", pair_type = "nn")
+```
+
+And for the reverse, converting a `pairwise` to a symmetric matrix:
+
+```{r}
+as.matrix(sc_dcor)
+```
+
+
+### Converting structures from package `correlation`:
+
+`correlation` package calculates different kinds of correlations, such as partial correlations, Bayesian correlations, multilevel correlations, polychoric correlations, biweight, percentage bend or Sheperd’s Pi correlations, distance correlation and more. The output data structure is a tidy dataframe with a correlation value and correlation tests for variable pairs for which the correlation method is defined. 
+
+
+```{r}
+correlation::correlation(penguins)
+```
+
+The default calculation uses Pearson correlation. Other options are available via the `method` argument.
+
+As there is an `as.matrix` method provided for the results of `correlation::correlation`, it is straightforward to convert this
+to a `pairwise` tibble.
+
+```{r}
+x <- correlation::correlation(penguins)
+pairwise(as.matrix(x)) 
+```

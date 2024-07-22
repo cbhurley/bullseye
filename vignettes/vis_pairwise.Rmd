@@ -1,0 +1,259 @@
+---
+title: "Visualising pairwise scores using bullseye."
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Visualising pairwise scores using bullseye.}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message=FALSE, warning=FALSE,
+  fig.width=4, fig.height=4, fig.align = "center"
+)
+
+
+```
+
+
+`bullseye` is an R package which calculates measures of association and other scores for pairs of variables in a dataset and helps in visualising these measures in different layouts. The package also calculates and visualises the pairwise measures for different levels of a grouping variable. 
+
+This vignette gives an overview of how these pairwise variable measures  are visualised. Calculation details are given in the accompanying vignette.  
+
+
+```{r setup, message=FALSE}
+if (!requireNamespace("palmerpenguins", quietly = TRUE))
+  install.packages("palmerpenguins")
+
+library(bullseye)
+library(palmerpenguins)
+library(dplyr)
+library(ggplot2)
+peng <-
+  rename(penguins, 
+           bill_length=bill_length_mm,
+           bill_depth=bill_depth_mm,
+           flipper_length=flipper_length_mm,
+           body_mass=body_mass_g)
+```
+
+```{r, echo=FALSE}
+library(ggiraph)
+set_girafe_defaults(opts_sizing= opts_sizing(rescale=FALSE, width=.5))
+```
+
+
+## Visualising associations
+
+The usual starting point is the visualisation of a correlation of numeric variables:
+
+```{r}
+plot(pair_cor(peng))
+```
+
+
+If you wish to also include factor variables, use an alternative to `pair_cor` which accepts numeric and factor variables, eg
+`pair_cancor`. To see the available methods which handle all variable types use
+
+```{r}
+filter(pair_methods,nn&ff&fn)
+```
+
+Alternatively, if you wish to show different association measures for correlation for numeric variables and cancor for non numeric, plot 
+the result of `pairwise_scores`:
+
+```{r}
+scores <- pairwise_scores(peng)
+plot(pairwise_scores(peng), interactive=TRUE)
+```
+
+Adding `interactive=TRUE` means tooltips are available.
+
+
+By default variables in this plot are re-ordered to emphasize pairs with maximum absolute scores. This re-ordering uses hierarchical clustering to place high score pairs adjacently, and also to push high score pairs to the top-left of the display.
+
+
+
+
+
+
+## Visualising multiple scores
+
+The `pairwise` structure has multiple association scores when each (x,y) pair appears multiple times in the pairwise structure.
+```{r}
+scores <- pairwise_scores(peng, by="species")
+plot(scores, interactive=TRUE) 
+```
+The bullseye plot shown here has a pie wedge representing the conditional correlations. The overall or ungrouped correlation is shown in the pie center.
+As there are multiple scores for each (x,y) pair the ordering algorithm is based on the maximum of these scores.
+
+An alternative ordering algorithm gives emphasis to pairs with the largest difference in the scores:
+```{r}
+plot(scores, var_order="seriate_max_diff", interactive=TRUE) 
+```
+
+Pairs of numeric variables exhibit Simpsons paradox if the ungrouped correlation is negative and the grouped corelations are positive (or vice-versa). This is present for the pairs (body_mass_mm, bill_depth_mm) and (bill_depth_mm, bill_length_mm).
+
+The island variable is also associated with the penguin dimension variables.
+However, this is mostly because two of the species (Gentoo and Chinstrap) are located on one island only. For these species, the score values for island  and the the other variables is NA, shown in grey.
+
+
+
+Multiple pairwise scores also occur when `pairwise` data structures are combined:
+
+```{r}
+mscores <- 
+bind_rows(
+  pair_cor(peng),
+  pair_cor(peng, method="spearman"),
+  pair_dcor(peng),
+  pair_ace(peng)
+) |> filter(pair_type=="nn") |>
+  mutate(value=abs(value)) # convert all scores to 0-1
+
+plot(mscores, interactive=TRUE) 
+```
+
+In this case the various measures of association are fairly consistent. For the `bill_depth` variable the ace correlations are higher than the others,
+indicating the presence of a non-linear association.
+
+## Visualising multiple scagnostic scores
+
+
+
+```{r}
+sc <- pair_scagnostics(peng)
+plot(sc, interactive=TRUE)
+```
+With many scores for example with scagnostics, an alternative display is perhaps easier to read.
+
+So we offer an alternative plot of the `pairwise` structure:
+
+```{r, fig.width=5}
+plot(sc, type="linear")
+```
+
+The default ordering arranges the variable pairs in order of their maximum score. Here all the high-scoring pairs involve year, which is not surprising as year takes just three distinct values.
+
+```{r}
+sc |> filter(y != "year")|>
+plot(type="linear", geom="point", add_lines=TRUE)
+```
+
+According to the scagnostic measures, all pairwise scatterplots exhibit skewness, and body_mass:flipper_length scores highly on the outlier measure.
+
+## Linear display for filtered pairwise objects
+
+We use the American Community Survey (2012) from the R package `openintro` which contains results from the US Census American Community Survey in 2012. 
+
+```{r, echo=FALSE}
+description <- c("Annual income",
+                 "Employment status with categories not in labor force, unemployed, employed",
+                 "Hours worked per week",
+                 "Race of the participant with categories white, black, asian or other",
+                 "Age of the participant in years",
+                 "Gender with categories male or female",
+                 "Whether the person is a U.S. citizen",
+                 "Travel time to work, in minutes",
+                 "Language spoken at home with categories english or other",
+                 "Whether the person is married",
+                 "Education level with categories hs or lower, college, grad",
+                 "Whether the person is disabled",
+                 "The quarter of the year that the person was born with categories jan thru mar,
+                 apr thru jun , jul thru sep, oct thru dec")
+
+df <- data.frame(Variable=names(openintro::acs12),
+                 Description=description
+                 )
+
+kableExtra::kbl(df, booktabs = T, caption = "Variable description of the acs12 dataset") |>
+  kableExtra::kable_styling(latex_options = "scale_down")
+```
+
+
+```{r}
+acs12 <- openintro::acs12
+
+scores <- pair_multi(acs12)
+```
+The `scores` contains various pairwise measures for the 78 variable pairs. Many of the scores will be low,
+so we pick out the pairs with a score of .25 or above to display:
+
+```{r}
+mutate(scores, valmax = max(abs(value)), .by=c(x,y))|>
+  filter(valmax > .25) |>
+  plot(type="linear",geom="point", interactive=TRUE)
+
+
+```
+employment:income has the highest score, measured using `ace`, suggesting  a higher association for transformed `income`.
+
+The `ave_cor` function calls  `acepack::ace` (handling factors and missing) and shows that ace picks a transformation that compresses high income values.
+
+```{r, eval=FALSE}
+a <- ace_cor(acs12$income, acs12$employment)
+plot(a$x, a$tx)
+```
+
+Similarly `age:income` has a high ace score, and a plot of these two variables shows income goes up with aage until about age 40 and then drops off.
+
+<!-- Note that for categorical pairs of variables, the highest value is given by uncertainty in all cases. -->
+
+<!-- ```{r} -->
+<!-- scores |> mutate(valmax = max(abs(value)), .by=c(x,y)) |> -->
+<!--   filter(pair_type=="ff") |> -->
+<!--   group_by(x,y)|>  -->
+<!--   slice_max(value) |> arrange(desc(value)) -->
+<!-- ``` -->
+
+
+Next, we calculate scores by race and filter those x,y pairs with high differences:
+
+```{r}
+group_scores <- pairwise_scores(acs12, by = "race")
+
+# filtering variable pairs with a range of 0.25 or greater
+rng <- function(vals){
+  if (all(is.na(vals))) 0 else max(vals, na.rm=TRUE)- min(vals,na.rm=TRUE)
+}
+
+mutate(group_scores, valrange = rng(value),valmax = max(abs(value)), .by=c(x,y))|>
+  filter(valrange > .25 | valmax > .4) |>
+  plot(type="linear", geom="point", interactive=TRUE, pair_order = "seriate_max_diff")
+```
+
+
+
+Asians have much higher association than other groups for many of the variables.
+Employed Asians report much higher hours worked:
+
+```{r}
+ggplot(data=acs12, aes(x=employment, y=hrs_work))+
+  geom_boxplot()+
+  facet_grid(rows=vars(race)) # NA col is because for employed=NA, there  hrs_work also NA
+```
+
+For Asians, there is a big difference in travel time to work for genders compared to other races.
+```{r}
+ggplot(data=acs12, aes(x=gender, y=time_to_work))+
+  geom_boxplot()+
+  facet_grid(cols=vars(race))
+```
+
+For Asians, there is a big difference in income across genders compared to other races.
+
+```{r}
+ggplot(data=acs12, aes(x=gender, y=income))+
+  geom_boxplot()+
+  facet_grid(cols=vars(race))
+```
+
+So Asians work more than other groups, but Asian women commute less and earn less.
+
+
+
+
+

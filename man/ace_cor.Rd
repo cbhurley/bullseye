@@ -19,3 +19,6 @@ result of \code{acepack::ace}
 \description{
 Calculates ace based transformations and correlation, handling missing values and factors.
 }
+\examples{
+ace_cor(iris$Sepal.Length, iris$Species)
+}

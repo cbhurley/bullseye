@@ -1,19 +1,16 @@
-#' Calculates association or conditional association measures for a dataset
+#' Calculates scores or conditional scores for a dataset
 #'
-#' Calculates association measures for every variable pair in a dataset when `by` is `NULL`. If `by`
-#' is a name of a variable in the dataset, conditional association measures for every
+#' Calculates scores for every variable pair in a dataset when `by` is `NULL`. If `by`
+#' is a name of a variable in the dataset, conditional scores for every
 #' variable pair at different levels of the grouping variable are calculated.
 #'
 #' @param d a dataframe
 #' @param by a character string for the name of the conditioning variable. Set to `NULL` by default.
 #' @param ungrouped Ignored if `by` is `NULL`.
-#'                       If TRUE calculates the overall measure of association for every pair of
-#'                       variable, in addition to association measures for pairs at levels of the
-#'                       conditioning variable.
-
+#'                       If TRUE calculates the ungrouped score in addition to grouped scores.
 #' @param control a list for the measures to be calculated for different variable types. The default is
 #'              [`pair_control()`] which calculates Pearson's correlation if the variable pair is numeric,
-#'              and canonical correlation for factor or mixed pairs.
+#'              canonical correlation for factor or mixed pairs, and polychoric correlation for two ordered factors.
 #' @param handle.na If TRUE uses pairwise complete observations to calculate measure of association.
 #' @details Returns a `pairwise` tibble structure.
 #' @return A tibble with class `pairwise`.
@@ -22,27 +19,27 @@
 #'
 #'
 #' @examples
-#' irisc <- pair_scores(iris)
-#' irisc <- pair_scores(iris, control=pair_control(nnargs= list(method="spearman")))
-#' irisc <- pair_scores(iris, control=pair_control(fn="pair_ace"))
+#' irisc <- pairwise_scores(iris)
+#' irisc <- pairwise_scores(iris, control=pair_control(nnargs= c(method="spearman")))
+#' irisc <- pairwise_scores(iris, control=pair_control(fn="pair_ace"))
 #'
 #' #Lots of numerical measures
-#' irisc <- pair_scores(iris, control=pair_control(nn="pair_all", fn=NULL))
-#' irisc <- pair_scores(iris, control=pair_control(nn=c("pair_all"), nnargs=c("pair_cor"), fn=NULL))
+#' irisc <- pairwise_scores(iris, control=pair_control(nn="pair_multi", fn=NULL))
+#' irisc <- pairwise_scores(iris, control=pair_control(nn="pair_multi", nnargs="pair_cor", fn=NULL))
 
 #' #conditional measures
-#' cond_iris <- pair_scores(iris, by = "Species") 
-#' cond_iris_wo <- pair_scores(iris, by = "Species",ungrouped=FALSE) # without overall
-#' irisc <- pair_scores(iris, control=pair_control(nn="pair_all", fn=NULL))
-#' irisc <- pair_scores(iris, by = "Species",control=pair_control(nn="pair_all", fn=NULL))
+#' cond_iris <- pairwise_scores(iris, by = "Species") 
+#' cond_iris_wo <- pairwise_scores(iris, by = "Species",ungrouped=FALSE) # without overall
+#' irisc <- pairwise_scores(iris, control=pair_control(nn="pair_multi", fn=NULL))
+#' irisc <- pairwise_scores(iris, by = "Species",control=pair_control(nn="pair_multi", fn=NULL))
 #'
 #' #scagnostics
-#' sc <- pair_scores(iris, control=pair_control(nn="pair_scagnostics", fn=NULL)) # ignore fn pairs
-#' sc <- pair_scores(iris, by = "Species",
+#' sc <- pairwise_scores(iris, control=pair_control(nn="pair_scagnostics", fn=NULL)) # ignore fn pairs
+#' sc <- pairwise_scores(iris, by = "Species",
 #'                   control=pair_control(nn="pair_scagnostics", fn=NULL)) # ignore fn pairs
 #' @importFrom rlang .data
 
-pair_scores  <- function(d,
+pairwise_scores  <- function(d,
                         by=NULL,
                         ungrouped=TRUE,
                         control=pair_control(),
@@ -56,9 +53,9 @@ pair_scores  <- function(d,
       if (is.numeric(d[[u]])) "n"
       else if (is.factor(d[[u]])) "f"
       else "other")
-
-    lookup <- function(xy){
-      list(funName = control[[xy]],
+   
+   lookup <- function(xy){
+       list(funName = control[[xy]],
           argList = control[[paste0(xy,"args")]])
     }
     utypes <- sort(unique(vartypes[vartypes != "other"]))
@@ -72,7 +69,10 @@ pair_scores  <- function(d,
           entry <- lookup(xy)
           dsub <- d[vartypes==utypes[i] | vartypes==utypes[j]]
           if (ncol(dsub)>1 & !is.null(entry$funName)){
-            m <- do.call(get(entry$funName), c(list(dsub, handle.na=handle.na), entry$argList))
+            if (is.null(entry$argList))
+            m <- do.call(get(entry$funName), list(dsub, handle.na=handle.na))
+            # else m <- do.call(get(entry$funName), append(list(dsub,  handle.na=handle.na), entry$argList))
+            else m <- do.call(get(entry$funName), list(dsub,  handle.na=handle.na, entry$argList))
             if (!inherits(m, "pairwise"))
               stop("Calculated pairwise scores must be of type pairwise")
             m <- m[m$pair_type==xy,]
@@ -84,17 +84,24 @@ pair_scores  <- function(d,
       }
     }
     measures <- measures[1:k]
-    dplyr::bind_rows(measures)
+    measures <- dplyr::bind_rows(measures)
+    if (!is.null(control$oo)) {
+      ordinals <- which(sapply(d, is.ordered))
+      if (length(ordinals) >=2){
+        dsub <- d[,ordinals]
+        m <- do.call(get(control$oo), c(list(dsub, handle.na=handle.na),control$ooargs))
+        measures<-dplyr::rows_update(measures,m,  by = c("x","y"))
+      }
+    }
+    measures
   } else {
 
     if (!(by %in% names(d))) cli::cli_abort(c("{.var by} not present in dataset."))
     tab <- table(d[[by]])
     if (any(tab == 1)) cli::cli_abort(c("{by} cannot be used as a grouping variable. Need more than one observation at each level."))
-    # if (!(is.factor(d[[by]]) | is.character(d[[by]])))
-    #   cli::cli_abort(c("{.var by} should name a factor or character variable."))
     result <- d |>
       dplyr::group_by(.data[[by]]) |>
-      dplyr::group_modify(function(x,y) pair_scores(x, control=control,handle.na=handle.na)) |>
+      dplyr::group_modify(function(x,y) pairwise_scores(x, control=control,handle.na=handle.na)) |>
       dplyr::ungroup() |>
       dplyr::mutate(group=.data[[by]]) |>
       dplyr::select(-dplyr::all_of(by))
@@ -102,7 +109,7 @@ pair_scores  <- function(d,
     if (ungrouped){
       overall <- d |>
         dplyr::select(-dplyr::all_of(by)) |>
-        pair_scores(control=control,handle.na=handle.na)
+        pairwise_scores(control=control,handle.na=handle.na)
       result <- rbind(result, overall)
     }
     result
@@ -111,29 +118,30 @@ pair_scores  <- function(d,
 
 }
 
-#' Default scores calculated  by `pair_scores`
+#' Default scores calculated  by `pairwise_scores`
 #'
-#' Gives a list specifying the function to be used for two numeric (nn) variables, two factors (ff) 
+#' Gives a list specifying the function to be used for two numeric (nn) variables, two factors (ff), two ordinals (oo)  
 #' and for a factor-numeric pair (fn). 
 #'
 #' @param nn function for numeric pairs of variables, should return object of class `pairwise`. Use NULL to ignore numeric pairs.
+#' @param oo function for ordered factor pairs of variables, should return object of class `pairwise`. Use NULL to ignore ordered factor pairs.
+#' @param ff function for factor pairs of variables (not ordered), should return object of class `pairwise`. Use NULL to ignore factor-factor pairs.
 #' @param fn function for factor-numeric pairs of variables, should return object of class `pairwise`. Use NULL to ignore factor-numeric pairs.
-#' @param ff function for factor pairs of variables, should return object of class `pairwise`. Use NULL to ignore factor-factor pairs.
 #' @param nnargs other arguments for the nn function
-#' @param fnargs other arguments for the fn function
+#' @param ooargs other arguments for the oo function
 #' @param ffargs other arguments for the ff function
-#'
+#' @param fnargs other arguments for the fn function
+#' 
 #' @return list
 #' @export
 #'
 
 pair_control <- function(nn = c("pair_cor","pair_dcor","pair_mine","pair_ace",
                                 "pair_cancor","pair_nmi", "pair_scagnostics" ),
+                         oo = c("pair_polychor", "pair_tau","pair_gkGamma","pair_gkTau"),
+                         ff = c("pair_cancor","pair_ace","pair_nmi", "pair_uncertainty","pair_chi"),
                          fn = c("pair_cancor", "pair_nmi","pair_ace"),
-                         ff = c("pair_cancor","pair_ace","pair_nmi","pair_polycor",    
-                                "pair_tau","pair_gkGamma","pair_gkTau","pair_uncertainty",
-                                "pair_chi"),
-                         nnargs=NULL, fnargs=NULL, ffargs=NULL){
+                         nnargs=NULL,  ooargs=NULL, ffargs=NULL,fnargs=NULL){
   
-  list(nn=nn[1], fn=fn[1],ff=ff[1],nnargs=nnargs,fnargs=fnargs,ffargs=ffargs)
+  list(nn=nn[1], fn=fn[1],oo=oo[1], ff=ff[1],nnargs=nnargs,fnargs=fnargs,ooargs=NULL, ffargs=ffargs)
 }

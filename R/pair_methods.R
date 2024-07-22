@@ -332,10 +332,10 @@ pair_tau <- function(d,method=c("B","A","C","W"),...){
   d <- dplyr::select(d, dplyr::where(is.factor))
   if(ncol(d)>1){
     if (method == "all"){
-      B <- pair_tau(d,method="B", handle.na = handle.na)
-      A <- pair_tau(d,method="A", handle.na = handle.na)
-      C <- pair_tau(d,method="C", handle.na = handle.na)
-      W <- pair_tau(d,method="W", handle.na = handle.na)
+      B <- pair_tau(d,method="B")
+      A <- pair_tau(d,method="A")
+      C <- pair_tau(d,method="C")
+      W <- pair_tau(d,method="W")
       dplyr::bind_rows(B,A,C,W)
     } else {
       a <- pairwise(d, score=paste0("tau", method), pair_type = "ff")
