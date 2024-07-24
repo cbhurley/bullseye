@@ -34,7 +34,8 @@ Suggests:
     correlation,
     palmerpenguins,
     kableExtra,
-    openintro
+    openintro,
+    corrplot
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://cbhurley.github.io/bullseye/

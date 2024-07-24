@@ -33,9 +33,9 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
   
   if (grepl("seriate", var_order[1])) {
     serfn <- if (var_order[1] == "seriate_max_diff")
-      function(x) diff(range(x)) else max
-    m <- pairwise_to_matrix(scores, serfn)
-    o <- DendSer::dser(stats::as.dist(-m), cost = DendSer::costLPL)
+      function(x) diff(range(x, na.rm=TRUE)) else function(x) max(x, na.rm=TRUE)
+    m <- pairwise_to_matrix(scores, serfn, default=0)
+    o <- suppressMessages(DendSer::dser(stats::as.dist(-m), cost = DendSer::costLPL))
     var_order <- rownames(m)[o]
   }
   scores$x <- factor(scores$x, levels=var_order)

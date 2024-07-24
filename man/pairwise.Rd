@@ -4,6 +4,7 @@
 \alias{pairwise}
 \alias{pairwise.matrix}
 \alias{pairwise.data.frame}
+\alias{pairwise.easycorrelation}
 \alias{as.pairwise}
 \title{A generic function to create a data structure for every variable pair in a dataset}
 \usage{
@@ -12,6 +13,8 @@ pairwise(x, score = NA_character_, pair_type = NA_character_)
 \method{pairwise}{matrix}(x, score = NA_character_, pair_type = NA_character_)
 
 \method{pairwise}{data.frame}(x, score = NA_character_, pair_type = NA_character_)
+
+\method{pairwise}{easycorrelation}(x, score = NA_character_, pair_type = NA_character_)
 
 as.pairwise(x, score = NA_character_, pair_type = NA_character_)
 }
@@ -34,6 +37,8 @@ Creates a data structure for every variable pair in a dataset.
 \item \code{pairwise(matrix)}: pairwise method
 
 \item \code{pairwise(data.frame)}: pairwise method
+
+\item \code{pairwise(easycorrelation)}: pairwise method
 
 }}
 \section{Functions}{

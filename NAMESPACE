@@ -2,6 +2,7 @@
 
 S3method(as.matrix,pairwise)
 S3method(pairwise,data.frame)
+S3method(pairwise,easycorrelation)
 S3method(pairwise,matrix)
 S3method(plot,pairwise)
 export(ace_cor)

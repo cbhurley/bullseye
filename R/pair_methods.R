@@ -94,7 +94,7 @@ pair_cancor <- function(d,handle.na=TRUE,...){
       )
     }
     
-    a$value <- mapply(fn, a$x,a$y)
+    a$value <- mapply(fn, a$x,a$y, USE.NAMES = FALSE)
     a
   }
 }
@@ -132,7 +132,7 @@ pair_dcor <- function(d, handle.na=TRUE,...){
       }
       sqrt(energy::dcor2d(x,y,...))
     }
-    dcor$value <-  mapply(fn, dcor$x,dcor$y)
+    dcor$value <-  mapply(fn, dcor$x,dcor$y, USE.NAMES = FALSE)
     dcor
   }
 
@@ -211,7 +211,7 @@ pair_nmi <- function(d,handle.na=T,...){
       }
       mi <- suppressMessages(linkspotter::maxNMI(x,y))
     }
-     nmi$value <-  mapply(fn, nmi$x,nmi$y)
+     nmi$value <-  mapply(fn, nmi$x,nmi$y, USE.NAMES = FALSE)
     nmi
     
   }
@@ -246,7 +246,7 @@ pair_polychor <- function(d,handle.na=TRUE,...){
   d <- d[, sapply(d, is.factor), drop=FALSE]
   if(ncol(d)>1){
     pcor <- pairwise(d, score="polychor", pair_type = "ff")
-    pcor$value <- mapply(function(x,y) polycor::polychor(d[[x]],d[[y]],...), pcor$x,pcor$y)
+    pcor$value <- mapply(function(x,y) polycor::polychor(d[[x]],d[[y]],...), pcor$x,pcor$y, USE.NAMES = FALSE)
     pcor
   }
 
@@ -289,7 +289,7 @@ pair_polyserial <- function(d,handle.na=TRUE,...){
     }
      pser <- pser[pser$pair_type == "fn",]
     # if (nrow(pser) == 1) return(NULL)
-    suppressWarnings(pser$value <- mapply(fn, pser$x,pser$y))
+    suppressWarnings(pser$value <- mapply(fn, pser$x,pser$y, USE.NAMES = FALSE))
     pser
   }
   
@@ -349,7 +349,7 @@ pair_tau <- function(d,method=c("B","A","C","W"),...){
           fn(d[c(x,y)], correct=TRUE)
         else fn(d[[x]],d[[y]])
       }
-      a$value <- mapply(fnlocal, a$x,a$y)
+      a$value <- mapply(fnlocal, a$x,a$y, USE.NAMES = FALSE)
       a
     }
     
@@ -383,7 +383,7 @@ pair_uncertainty <- function(d,handle.na=TRUE,...){
   d <- dplyr::select(d, dplyr::where(is.factor))
   if(ncol(d)>1){
     a <- pairwise(d, score="uncertainty", pair_type = "ff")
-    a$value <- mapply(function(x,y) DescTools::UncertCoef(d[[x]],d[[y]],...), a$x,a$y)
+    a$value <- mapply(function(x,y) DescTools::UncertCoef(d[[x]],d[[y]],...), a$x,a$y, USE.NAMES = FALSE)
     a
   }
 
@@ -416,7 +416,7 @@ pair_gkTau <- function(d,handle.na=TRUE,...){
   if(ncol(d)>1){
     a <- pairwise(d, score="gkTau", pair_type = "ff")
     fnlocal <- function(x,y) max(DescTools::GoodmanKruskalTau(d[[x]],d[[y]]),DescTools::GoodmanKruskalTau(d[[y]],d[[x]]))
-    a$value <- mapply(fnlocal, a$x,a$y)
+    a$value <- mapply(fnlocal, a$x,a$y, USE.NAMES = FALSE)
     a
   }
 
@@ -450,7 +450,7 @@ pair_gkGamma <- function(d,handle.na=TRUE,...){
   d <- dplyr::select(d, dplyr::where(is.factor))
   if(ncol(d)>1){
     a <- pairwise(d, score="gkGamma", pair_type = "ff")
-    a$value <- mapply(function(x,y) DescTools::GoodmanKruskalGamma(d[[x]],d[[y]],...), a$x,a$y)
+    a$value <- mapply(function(x,y) DescTools::GoodmanKruskalGamma(d[[x]],d[[y]],...), a$x,a$y, USE.NAMES = FALSE)
     a
   }
 
@@ -481,7 +481,7 @@ pair_chi <- function(d,handle.na=TRUE,...){
   d <- dplyr::select(d, dplyr::where(is.factor))
   if(ncol(d)>1){
     a <- pairwise(d, score="chi", pair_type = "ff")
-    a$value <- mapply(function(x,y) DescTools::ContCoef(d[[x]],d[[y]],...), a$x,a$y)
+    a$value <- mapply(function(x,y) DescTools::ContCoef(d[[x]],d[[y]],...), a$x,a$y, USE.NAMES = FALSE)
     a
   }
 
@@ -556,7 +556,7 @@ pair_ace <- function(d, handle.na = T, ...) {
       sqrt(s)
     }
 
-    ace_score$value <- mapply(ace_fn, ace_score$x,ace_score$y)
+    ace_score$value <- mapply(ace_fn, ace_score$x,ace_score$y, USE.NAMES = FALSE)
     ace_score
   }
 }

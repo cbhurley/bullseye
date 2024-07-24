@@ -29,11 +29,10 @@ if (!requireNamespace("palmerpenguins", quietly = TRUE))
   install.packages("palmerpenguins")
 
 library(bullseye)
-library(palmerpenguins)
 library(dplyr)
 library(ggplot2)
 peng <-
-  rename(penguins, 
+  rename(palmerpenguins::penguins, 
            bill_length=bill_length_mm,
            bill_depth=bill_depth_mm,
            flipper_length=flipper_length_mm,

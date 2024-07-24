@@ -19,7 +19,7 @@ pairwise <- function(x, score=NA_character_, pair_type=NA_character_){
 }
 
 
-pairwise_to_matrix <- function(scores, stat=function(x) diff(range(x))){
+pairwise_to_matrix <- function(scores, stat=function(x) diff(range(x,na.rm=TRUE)), default=NA){
   allvars <- unique(c(scores$x, scores$y))
   
   scores1 <- dplyr::summarise(scores, 
@@ -27,7 +27,7 @@ pairwise_to_matrix <- function(scores, stat=function(x) diff(range(x))){
                               measure= if (.data$n > 1) stat(.data$value) else .data$value,
                               .by=dplyr::all_of(c("x","y")))
   scores1 <- scores1[!is.na(scores1$measure),]
-  m <- matrix(0, nrow=length(allvars), ncol=length(allvars))
+  m <- matrix(default, nrow=length(allvars), ncol=length(allvars))
   rownames(m)<- colnames(m)<- allvars
   m[cbind(scores1$x,scores1$y)]<- m[cbind(scores1$y,scores1$x)]<-scores1$measure
   m
@@ -65,7 +65,7 @@ pairwise.data.frame <- function(x, score=NA_character_, pair_type=NA_character_)
   dcor <- diag(ncol(x)) 
   dcor[]<- NA
   rownames(dcor)<- colnames(dcor) <- names(x)
-  dcor <- pairwise(dcor, score=score, pair_type=pair_type)
+  dcor <- pairwise.matrix(dcor, score=score, pair_type=pair_type)
   if (is.na(pair_type)){
     fn_pair_type <- function(u,v){
       if(is.numeric(x[[u]]) & is.numeric(x[[v]])) {
@@ -76,10 +76,23 @@ pairwise.data.frame <- function(x, score=NA_character_, pair_type=NA_character_)
         "fn"
       }
     }
-    dcor$pair_type <- mapply(fn_pair_type, dcor$x,dcor$y)
+    dcor$pair_type <- mapply(fn_pair_type, dcor$x,dcor$y, USE.NAMES = FALSE)
     
   }
   dcor
+}
+
+#' @describeIn pairwise  pairwise method
+#' @export
+pairwise.easycorrelation <- function(x, score=NA_character_, pair_type=NA_character_){
+  res <- dplyr::mutate(x, x=pmin(.data$Parameter1, .data$Parameter2),
+                       y=pmax(.data$Parameter1, .data$Parameter2),
+                       score=.data$Method, 
+                       group="all", value=.data$r, pair_type=NA, .keep="none") |>
+    dplyr::filter(.data$x != .data$y)
+  class(res) <- class(as.pairwise(diag(1)))
+  res <- unique(res)
+  res
 }
 
 #' @describeIn pairwise  Same as `pairwise`
@@ -96,6 +109,6 @@ as.pairwise <- function(x, score=NA_character_, pair_type=NA_character_){
 #' @export
 #' 
 as.matrix.pairwise <- function(x, ...){
-  pairwise_to_matrix(x, stat=dplyr::first)
+  pairwise_to_matrix(x, stat=dplyr::first,...)
 }
 
