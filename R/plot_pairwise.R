@@ -17,7 +17,7 @@
 #' If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values. If some rows have `group=center_level`, then the glyph is drawn as a bullseye.
 #' @examples
 #' plot_pairwise(pair_cor(iris))
-#' plot_pairwise(pair_scores(iris,by="Species"))
+#' plot_pairwise(pairwise_scores(iris,by="Species"))
 
 #' @export
 
@@ -167,8 +167,8 @@ plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore
 #' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
 #' 
 #' @examples
-#' plot_pairwise_linear(pair_scores(iris))
-#' plot_pairwise_linear(pair_scores(iris,by="Species"))
+#' plot_pairwise_linear(pairwise_scores(iris))
+#' plot_pairwise_linear(pairwise_scores(iris,by="Species"))
 #' plot_pairwise_linear(pair_multi(iris), geom="point")
 #' @export
 #' 
@@ -272,14 +272,14 @@ arrange_tiles_x <- function(scores, score_label){
 #' Plot method for class `pairwise`. 
 #'
 #' @param x An object of class `pairwise`
-#' @param tyoe If "matrix", calls `plot_pairwise`, if "linear" calls `plot_pairwise_linear`
+#' @param type If "matrix", calls `plot_pairwise`, if "linear" calls `plot_pairwise_linear`
 #' @param ... further arguments to \code{plot_pairwise} or \code{plot_pairwise_linear}
 #'
 #' @return a plot
 #' @export
 #'
 #' @examples
-#' plot(pair_scores(iris))
+#' plot(pairwise_scores(iris))
 plot.pairwise<- function(x, type=c("matrix", "linear"), ...){
   if (type[1]=="matrix") 
     plot_pairwise(x,...)

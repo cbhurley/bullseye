@@ -39,7 +39,7 @@ A \code{girafe} object if interactive==TRUE, otherwise a \code{ggplot2}.
 Plots the calculated measures of association among different variable pairs for a dataset in a linear layout.
 }
 \examples{
-plot_pairwise_linear(pair_scores(iris))
-plot_pairwise_linear(pair_scores(iris,by="Species"))
+plot_pairwise_linear(pairwise_scores(iris))
+plot_pairwise_linear(pairwise_scores(iris,by="Species"))
 plot_pairwise_linear(pair_multi(iris), geom="point")
 }

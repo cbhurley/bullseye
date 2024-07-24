@@ -41,5 +41,5 @@ Plots multiple pairwise variable scores in a matrix layout.
 }
 \examples{
 plot_pairwise(pair_cor(iris))
-plot_pairwise(pair_scores(iris,by="Species"))
+plot_pairwise(pairwise_scores(iris,by="Species"))
 }

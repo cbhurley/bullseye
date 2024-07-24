@@ -605,6 +605,9 @@ pair_methods <- dplyr::tribble(
 #'
 #' @examples
 #' pairwise_by(iris, by="Species", pair_cor)
+#' 
+#' 
+
 pairwise_by <- function(d, by, pair_fun, ungrouped=TRUE){
   if (!(by %in% names(d))) cli::cli_abort(c("{.var by} not present in dataset."))
   tab <- table(d[[by]])
@@ -620,7 +623,7 @@ pairwise_by <- function(d, by, pair_fun, ungrouped=TRUE){
     overall <- d |>
       dplyr::select(-dplyr::all_of(by)) |>
       pair_fun()
-     result <- rbind(result, overall)
+    result <- rbind(result, overall)
   }
   result
 }

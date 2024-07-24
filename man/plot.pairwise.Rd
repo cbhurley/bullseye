@@ -9,9 +9,9 @@
 \arguments{
 \item{x}{An object of class \code{pairwise}}
 
-\item{...}{further arguments to \code{plot_pairwise} or \code{plot_pairwise_linear}}
+\item{type}{If "matrix", calls \code{plot_pairwise}, if "linear" calls \code{plot_pairwise_linear}}
 
-\item{tyoe}{If "matrix", calls \code{plot_pairwise}, if "linear" calls \code{plot_pairwise_linear}}
+\item{...}{further arguments to \code{plot_pairwise} or \code{plot_pairwise_linear}}
 }
 \value{
 a plot
@@ -20,5 +20,5 @@ a plot
 Plot method for class \code{pairwise}.
 }
 \examples{
-plot(pair_scores(iris))
+plot(pairwise_scores(iris))
 }

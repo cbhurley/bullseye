@@ -23,4 +23,6 @@ Constructs a pairwise result for each level of a by variable.
 }
 \examples{
 pairwise_by(iris, by="Species", pair_cor)
+
+
 }

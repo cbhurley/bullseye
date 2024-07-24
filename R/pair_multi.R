@@ -32,8 +32,8 @@ pair_multi <- function(d,scores=c("pair_cor", "pair_dcor","pair_mine","pair_ace"
 
   if ("pair_cor" %in% scores) {
     spearman <- pair_cor(d,method="spearman", handle.na = handle.na)
-    kendall <- pair_cor(d,method="kendall", handle.na = handle.na)
-    results <- dplyr::bind_rows(results, spearman, kendall)
+    # kendall <- pair_cor(d,method="kendall", handle.na = handle.na)
+    results <- dplyr::bind_rows(results, spearman)
   }
 
   if ("pair_tau" %in% scores) {

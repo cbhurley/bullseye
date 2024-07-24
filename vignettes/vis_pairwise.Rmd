@@ -200,14 +200,6 @@ plot(a$x, a$tx)
 
 Similarly `age:income` has a high ace score, and a plot of these two variables shows income goes up with aage until about age 40 and then drops off.
 
-<!-- Note that for categorical pairs of variables, the highest value is given by uncertainty in all cases. -->
-
-<!-- ```{r} -->
-<!-- scores |> mutate(valmax = max(abs(value)), .by=c(x,y)) |> -->
-<!--   filter(pair_type=="ff") |> -->
-<!--   group_by(x,y)|>  -->
-<!--   slice_max(value) |> arrange(desc(value)) -->
-<!-- ``` -->
 
 
 Next, we calculate scores by race and filter those x,y pairs with high differences:
@@ -222,7 +214,9 @@ rng <- function(vals){
 
 mutate(group_scores, valrange = rng(value),valmax = max(abs(value)), .by=c(x,y))|>
   filter(valrange > .25 | valmax > .4) |>
-  plot(type="linear", geom="point", interactive=TRUE, pair_order = "seriate_max_diff")
+  plot(type="linear", geom="point", pair_order = "seriate_max_diff")+ 
+   theme(legend.text = element_text(size = rel(.5)), legend.title = element_text(size = rel(.5))
+  )
 ```
 
 
@@ -237,7 +231,7 @@ ggplot(data=acs12, aes(x=employment, y=hrs_work))+
 ```
 
 For Asians, there is a big difference in travel time to work for genders compared to other races.
-```{r}
+```{r, fig.height=3}
 ggplot(data=acs12, aes(x=gender, y=time_to_work))+
   geom_boxplot()+
   facet_grid(cols=vars(race))
@@ -245,7 +239,7 @@ ggplot(data=acs12, aes(x=gender, y=time_to_work))+
 
 For Asians, there is a big difference in income across genders compared to other races.
 
-```{r}
+```{r, fig.height=3}
 ggplot(data=acs12, aes(x=gender, y=income))+
   geom_boxplot()+
   facet_grid(cols=vars(race))
