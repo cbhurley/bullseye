@@ -21,7 +21,7 @@ as.pairwise(x, score = NA_character_, pair_type = NA_character_)
 \arguments{
 \item{x}{A dataframe or symmetric matrix.}
 
-\item{score}{a character string indicating the value of association.}
+\item{score}{a character string indicating the value of association, either "nn", "fn", "ff".}
 
 \item{pair_type}{a character string specifying the type of variable pair.}
 }

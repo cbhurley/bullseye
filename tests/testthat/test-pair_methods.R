@@ -97,7 +97,7 @@ test_that("pair ace", {
 
 
 test_that("pair multi", {
-  p <- pair_multi(iris)
+  p <- pairwise_multi(iris)
   expect_s3_class(p, "pairwise")
   expect_identical(dim(p), c(54L,6L))
 })

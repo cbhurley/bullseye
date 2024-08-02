@@ -169,7 +169,7 @@ plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore
 #' @examples
 #' plot_pairwise_linear(pairwise_scores(iris))
 #' plot_pairwise_linear(pairwise_scores(iris,by="Species"))
-#' plot_pairwise_linear(pair_multi(iris), geom="point")
+#' plot_pairwise_linear(pairwise_multi(iris), geom="point")
 #' @export
 #' 
 

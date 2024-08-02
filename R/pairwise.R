@@ -3,7 +3,7 @@
 #' Creates a data structure for every variable pair in a dataset.
 #'
 #' @param x A dataframe or symmetric matrix.
-#' @param score a character string indicating the value of association.
+#' @param score a character string indicating the value of association, either "nn", "fn", "ff".
 #' @param pair_type a character string specifying the type of variable pair.
 #' @return A tbl_df of class `pairwise` for pairs of variables with a column `value` for the score value,
 #' `score` for a type of association value and `pair_type` for the type of variable pair.
@@ -39,7 +39,7 @@ pairwise.matrix <- function(x, score=NA_character_, pair_type=NA_character_){
   m <- x
   if (!isSymmetric(m))
     stop("Input must be a symmetric matrix")
-
+ 
   xindex <- as.vector(row(m))
   yindex <- as.vector(col(m))
   rnames <- rownames(m) %||% paste0("V", seq_along(xindex))

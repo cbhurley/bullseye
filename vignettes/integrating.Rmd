@@ -85,8 +85,9 @@ plot(as.pairwise(sc_cor))
 
 Multiple measures from `correlation` can also be used:
 ```{r}
-sc_multi<- bind_rows(as.pairwise(correlation::correlation(peng, method = "pearson")),
-                              as.pairwise(correlation::correlation(peng, method = "blomqvist")),
-                              as.pairwise(correlation::correlation(peng, method = "biweight")))
+sc_multi<- bind_rows(
+  as.pairwise(correlation::correlation(peng, method = "pearson")),
+  as.pairwise(correlation::correlation(peng, method = "blomqvist")),
+  as.pairwise(correlation::correlation(peng, method = "biweight")))
 plot(sc_multi)
 ```

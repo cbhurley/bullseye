@@ -41,5 +41,5 @@ Plots the calculated measures of association among different variable pairs for 
 \examples{
 plot_pairwise_linear(pairwise_scores(iris))
 plot_pairwise_linear(pairwise_scores(iris,by="Species"))
-plot_pairwise_linear(pair_multi(iris), geom="point")
+plot_pairwise_linear(pairwise_multi(iris), geom="point")
 }

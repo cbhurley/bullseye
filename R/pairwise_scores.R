@@ -24,14 +24,15 @@
 #' irisc <- pairwise_scores(iris, control=pair_control(fn="pair_ace"))
 #'
 #' #Lots of numerical measures
-#' irisc <- pairwise_scores(iris, control=pair_control(nn="pair_multi", fn=NULL))
-#' irisc <- pairwise_scores(iris, control=pair_control(nn="pair_multi", nnargs="pair_cor", fn=NULL))
+#' irisc <- pairwise_scores(iris, control=pair_control(nn="pairwise_multi", fn=NULL))
+#' irisc <- pairwise_scores(iris, 
+#'              control=pair_control(nn="pairwise_multi",  nnargs="pair_cor", fn=NULL))
 
 #' #conditional measures
 #' cond_iris <- pairwise_scores(iris, by = "Species") 
 #' cond_iris_wo <- pairwise_scores(iris, by = "Species",ungrouped=FALSE) # without overall
-#' irisc <- pairwise_scores(iris, control=pair_control(nn="pair_multi", fn=NULL))
-#' irisc <- pairwise_scores(iris, by = "Species",control=pair_control(nn="pair_multi", fn=NULL))
+#' irisc <- pairwise_scores(iris, control=pair_control(nn="pairwise_multi", fn=NULL))
+#' irisc <- pairwise_scores(iris, by = "Species",control=pair_control(nn="pairwise_multi", fn=NULL))
 #'
 #' #scagnostics
 #' sc <- pairwise_scores(iris, control=pair_control(nn="pair_scagnostics", fn=NULL)) # ignore fn pairs

@@ -401,7 +401,7 @@ pair_uncertainty <- function(d,handle.na=TRUE,...){
 #' @return A tibble of class `pairwise` with Goodman Kruskal's Tau for every factor variable pair,
 #' or NULL if there are not at least two factor variables
 #' @details The Goodman Kruskal's Tau coefficient is calculated using \code{\link[DescTools]{GoodmanKruskalTau}}
-#' function from the \code{DescTools} package, and assumes factor levels are in the given order.
+#' function from the \code{DescTools} package.
 #' @export
 #'
 #' @examples
@@ -586,7 +586,7 @@ pair_methods <- dplyr::tribble(
   "pair_polyserial", FALSE, FALSE, TRUE, "polycor::polyserial", "[-1,1]","factor treated as ordinal",
   "pair_tau", FALSE, TRUE, FALSE, "DescTools::KendalTauA,B,C,W", "[-1,1]","factors treated as ordinal",
   "pair_gkGamma", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalGamma", "[-1,1]","factors treated as ordinal",
-  "pair_gkTau", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalTau", "[0,1]","factors treated as ordinal",
+  "pair_gkTau", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalTau", "[0,1]","",
   "pair_uncertainty", FALSE,  TRUE, FALSE, "DescTools::UncertCoef", "[0,1]","",
   "pair_chi", FALSE,  TRUE,  FALSE, "DescTools::ContCoef", "[0,1]","",
   "pair_scag", TRUE, FALSE,  FALSE, "scagnostics::scagnostics", "[0,1]","",

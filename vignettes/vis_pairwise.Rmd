@@ -176,7 +176,7 @@ kableExtra::kbl(df, booktabs = T, caption = "Variable description of the acs12 d
 ```{r}
 acs12 <- openintro::acs12
 
-scores <- pair_multi(acs12)
+scores <- pairwise_multi(acs12)
 ```
 The `scores` contains various pairwise measures for the 78 variable pairs. Many of the scores will be low,
 so we pick out the pairs with a score of .25 or above to display:

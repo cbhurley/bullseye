@@ -22,7 +22,7 @@ Calculates Goodman Kruskal's Tau coefficient for every factor variable pair in a
 }
 \details{
 The Goodman Kruskal's Tau coefficient is calculated using \code{\link[DescTools]{GoodmanKruskalTau}}
-function from the \code{DescTools} package, and assumes factor levels are in the given order.
+function from the \code{DescTools} package.
 }
 \examples{
  pair_gkTau(iris)

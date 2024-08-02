@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`bullseye` is an R package which calculates measures of association and other scores for pairs of variables in a dataset and helps in visualising these measures in different layouts. The package also calculates and visualises the pairwise measures for different levels of a grouping variable. 
+`bullseye` is an R package which calculates measures of correlation and other association scores for pairs of variables in a dataset and offers visualisations of these measures in different layouts. The package also calculates and visualises the pairwise scores for different levels of a grouping variable. 
 
 This vignette gives an overview of how these pairwise variable measures  are calculated. Visualisations of these calculated measures are provided in the accompanying vignette.  
 
@@ -81,14 +81,14 @@ If you want for instance to compare distance correlation and mutual information 
 bind_rows(sc_dcor, sc_nmi) |> arrange(x,y)
 ```
 
-We provide another function `pair_multi` which calculates multiple association measures for every variable pair in a dataset.
+We provide another function `pairwise_multi` which calculates multiple association measures for every variable pair in a dataset.
 By default this function combines the results of `pair_cor`, `pair_dcor`,`pair_mine`,`pair_ace`,
                                     `pair_cancor`,`pair_nmi`,`pair_uncertainty`,
                                     `pair_chi`, but any subset of the `pair_` functions may be supplied as an argument, as in the second example below.
 
 ```{r}
-pair_multi(penguins)
-dcor_nmi <- pair_multi(penguins, c("pair_dcor", "pair_nmi"))
+pairwise_multi(penguins)
+dcor_nmi <- pairwise_multi(penguins, c("pair_dcor", "pair_nmi"))
 ```
 
 
@@ -115,7 +115,7 @@ sc_sex |> distinct(group)
 If you want to calculate different scores to the default, specify this via the `control` argument:
 
 ```{r}
-pc <- pair_control(nn="pair_multi", nnargs= c("pair_dcor", "pair_ace"), fn=NULL, ff=NULL)
+pc <- pair_control(nn="pairwise_multi", nnargs= c("pair_dcor", "pair_ace"), fn=NULL, ff=NULL)
 sc_sex <- pairwise_scores(penguins, by="species", control=pc, ungrouped=FALSE) 
 ```
 

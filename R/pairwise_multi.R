@@ -15,10 +15,10 @@
 #' @examples
 #' iris1 <- iris
 #' iris1$Sepal.Length <- cut(iris1$Sepal.Length,3)
-#' pair_multi(iris1)
+#' pairwise_multi(iris1)
 
 
-pair_multi <- function(d,scores=c("pair_cor", "pair_dcor","pair_mine","pair_ace",
+pairwise_multi <- function(d,scores=c("pair_cor", "pair_dcor","pair_mine","pair_ace",
                                     "pair_cancor","pair_nmi","pair_uncertainty",
                                     "pair_chi"),
                          handle.na=T) {
