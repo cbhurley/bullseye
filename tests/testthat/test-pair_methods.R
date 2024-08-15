@@ -50,7 +50,16 @@ test_that("pair polyserial", {
 test_that("pair tau", {
   iris1 <- iris[c(1,2,53,55),]
   iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
-  p <- pair_tau(droplevels(iris1))
+  p <- pair_tauB(droplevels(iris1))
+  expect_s3_class(p, "pairwise")
+  expect_identical(dim(p), c(1L,6L))
+  p <- pair_tauA(droplevels(iris1))
+  expect_s3_class(p, "pairwise")
+  expect_identical(dim(p), c(1L,6L))
+  p <- pair_tauC(droplevels(iris1))
+  expect_s3_class(p, "pairwise")
+  expect_identical(dim(p), c(1L,6L))
+  p <- pair_tauW(droplevels(iris1))
   expect_s3_class(p, "pairwise")
   expect_identical(dim(p), c(1L,6L))
 })

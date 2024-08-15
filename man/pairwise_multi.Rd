@@ -14,7 +14,7 @@ pairwise_multi(
 \arguments{
 \item{d}{dataframe}
 
-\item{scores}{a vector naming pairwise functions.}
+\item{scores}{a vector naming functions returning a \code{pairwise} from a dataset.}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate pairwise score, otherwise NAs not handled.}
 }

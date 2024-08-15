@@ -8,7 +8,7 @@ pair_scagnostics(
   d,
   scagnostic = c("Outlying", "Skewed", "Clumpy", "Sparse", "Striated", "Convex",
     "Skinny", "Stringy", "Monotonic"),
-  handle.na = T,
+  handle.na = TRUE,
   ...
 )
 }

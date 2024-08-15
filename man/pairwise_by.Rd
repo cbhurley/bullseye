@@ -11,7 +11,7 @@ pairwise_by(d, by, pair_fun, ungrouped = TRUE)
 
 \item{by}{a character string for the name of the conditioning variable.}
 
-\item{pair_fun}{One of the \code{pair_} functions}
+\item{pair_fun}{A function returning a \code{pairwise} from a dataset.}
 
 \item{ungrouped}{If TRUE calculates the ungrouped score in addition to grouped scores.}
 }

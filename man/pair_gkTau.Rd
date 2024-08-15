@@ -2,14 +2,14 @@
 % Please edit documentation in R/pair_methods.R
 \name{pair_gkTau}
 \alias{pair_gkTau}
-\title{Goodman Kruskal's Tau}
+\title{Goodman Kruskal's Tau for association between ordinal factors.}
 \usage{
 pair_gkTau(d, handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
-\item{handle.na}{If TRUE uses pairwise complete observations, otherwise NAs not handled.}
+\item{handle.na}{ignored. Pairwise complete observations are used automatically.}
 
 \item{...}{other arguments}
 }
@@ -22,7 +22,8 @@ Calculates Goodman Kruskal's Tau coefficient for every factor variable pair in a
 }
 \details{
 The Goodman Kruskal's Tau coefficient is calculated using \code{\link[DescTools]{GoodmanKruskalTau}}
-function from the \code{DescTools} package.
+function from the \code{DescTools} package. Assumes factor levels are in the given order.
+NAs are automatically handled by pairwise omit.
 }
 \examples{
  pair_gkTau(iris)

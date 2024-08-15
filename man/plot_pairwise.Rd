@@ -34,7 +34,8 @@ variables are re-ordered to emphasize pairs with maximum score differences. Othe
 \value{
 A \code{girafe} object if interactive==TRUE, otherwise a \code{ggplot2}.
 
-If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values. If some rows have \code{group=center_level}, then the glyph is drawn as a bullseye.
+If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values.
+If some rows have \code{group=center_level}, then the glyph is drawn as a bullseye.
 }
 \description{
 Plots multiple pairwise variable scores in a matrix layout.

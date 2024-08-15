@@ -39,17 +39,31 @@ pair_cor <- function(d, method="pearson", handle.na=TRUE,...){
   }
 }
 
-  # pair_cor <-  function(d, method="pearson", handle.na=TRUE,...){
-  #   check_df(d)
-  #   d <- d[, sapply(d, is.numeric), drop=FALSE]
-  #   if (ncol(d) > 1){
-  #     if (handle.na)
-  #       dcor <- cor(d,method=method,use="pairwise.complete.obs")
-  #     else dcor <- cor(d,method=method,...)
-  #     pairwise(dcor, score=method, pair_type = "nn")
-  #   }
-  # }
 
+
+
+ccor <- function(x,y, handle.na=TRUE){
+  if(handle.na){
+    pick <- complete.cases(x, y)
+    x <- x[pick]
+    y <- y[pick]
+  }
+  
+  if (length(x) <= 2) {
+    return (NA)
+  }
+  if (!is.numeric(x))
+    x <- sapply(unique(x), function(u) as.numeric(x ==u))[,-1]
+  if (!is.numeric(y))
+    y <- sapply(unique(y), function(u) as.numeric(y ==u))[,-1]
+  tryCatch(cancor(x,y)$cor[1], error = function(e) {
+    # message("Cannot calculate cancor, returning NA")
+    NA
+  }
+  )
+}
+  
+  
 #' Canonical correlation
 #'
 #' Calculates canonical correlation for every variable pair in a dataset.
@@ -74,24 +88,7 @@ pair_cancor <- function(d,handle.na=TRUE,...){
     fn <- function(x,y){
       x <- d[[x]]
       y <- d[[y]]
-      if(handle.na){
-        pick <- complete.cases(x, y)
-        x <- x[pick]
-        y <- y[pick]
-      }
-      
-      if (length(x) <= 2) {
-        return (NA)
-      }
-      if (!is.numeric(x))
-        x <- sapply(unique(x), function(u) as.numeric(x ==u))[,-1]
-      if (!is.numeric(y))
-        y <- sapply(unique(y), function(u) as.numeric(y ==u))[,-1]
-      tryCatch(cancor(x,y)$cor[1], error = function(e) {
-        # message("Cannot calculate cancor, returning NA")
-        NA
-      }
-      )
+      ccor(x,y,handle.na=handle.na)
     }
     
     a$value <- mapply(fn, a$x,a$y, USE.NAMES = FALSE)
@@ -138,13 +135,33 @@ pair_dcor <- function(d, handle.na=TRUE,...){
 
 }
 
+
+
+
+# pair_mine <- function(d, method="mic",handle.na=TRUE,...){
+#   if (!requireNamespace("minerva", quietly = TRUE))
+#     stop("Please install package 'minerva' to use pair_mine", call.=FALSE)
+#   check_df(d)
+#   
+#   d <- d[, sapply(d, is.numeric), drop=FALSE]
+#   if(ncol(d)>1){
+#     if (handle.na)
+#       dcor <- minerva::mine(d,use="pairwise.complete.obs",...)
+#     else dcor <- minerva::mine(d,...)
+# 
+#     dcor <- dcor[[toupper(method)]]
+#     pairwise(dcor, score=method, pair_type = "nn")
+#   }
+# 
+# }
+
+
 #' MINE family values
 #'
 #' Calculates MINE family values for every numeric variable pair in a dataset.
 #'
 #' @param d A dataframe
-#' @param method character string for the MINE value to be calculated. Either "mic" (default), "mas", "mev",
-#'               "mcn", or "mic-r2"
+#' @param method character vector for the MINE value to be calculated. Subset of "MIC","MAS","MEV","MCN","MICR2", "GMIC",  "TIC"  
 #' @param handle.na If TRUE uses pairwise complete observations to calculate score, otherwise NAs not handled.
 #' @param ... other arguments
 #'
@@ -154,13 +171,12 @@ pair_dcor <- function(d, handle.na=TRUE,...){
 #' @details The values are calculated using \code{\link[minerva]{mine}} from \code{minerva}
 #' @examples
 #'  pair_mine(iris)
-#'  pair_mine(iris, method="mas")
+#'  pair_mine(iris, method="MAS")
 
 #' @references Reshef, David N., et al. "Detecting novel associations in large data sets."
 #' science 334.6062 (2011): 1518-1524
-
-
-pair_mine <- function(d, method="mic",handle.na=TRUE,...){
+#' 
+pair_mine <- function(d, method="MIC",handle.na=TRUE,...){
   if (!requireNamespace("minerva", quietly = TRUE))
     stop("Please install package 'minerva' to use pair_mine", call.=FALSE)
   check_df(d)
@@ -168,13 +184,19 @@ pair_mine <- function(d, method="mic",handle.na=TRUE,...){
   d <- d[, sapply(d, is.numeric), drop=FALSE]
   if(ncol(d)>1){
     if (handle.na)
-      dcor <- minerva::mine(d,use="pairwise.complete.obs",...)
-    else dcor <- minerva::mine(d,...)
-
-    dcor <- dcor[[toupper(method)]]
-    pairwise(dcor, score=method, pair_type = "nn")
+      dcor <- minerva::mine(d,use="pairwise.complete.obs",normalization=TRUE,...)
+    else dcor <- minerva::mine(d,normalization=TRUE,...)
+    mine_choices <- names(dcor)
+    sel_mine <- match.arg(toupper(method), mine_choices, several.ok=TRUE)
+    p <- pairwise(dcor[[sel_mine[1]]], score=sel_mine[1], pair_type = "nn")
+    for (m in sel_mine[-1]){
+      pm <- pairwise(dcor[[m]], score=m, pair_type = "nn")
+      p <- rbind(p, pm)
+    }
+    p |> 
+      dplyr::arrange(.data$x, .data$y)
   }
-
+  
 }
 
 
@@ -296,48 +318,14 @@ pair_polyserial <- function(d,handle.na=TRUE,...){
 }
 
 
-#' Kendall's tau A, B, C and Kendall's W
-#'
-#' Calculates one of either Kendall's tau A, B, C or Kendall's W for every  factor variable pair in a dataset.
-#'
-#' @param d A dataframe
-#' @param method A character string for the correlation coefficient to be calculated, one of "B" (default),
-#'               "A", "C" or "W". If the value is "all", then all four correlations are calculated.
-#' @param ... other arguments
-#'
-#' @return  A tibble of class `pairwise` with factor pairs along with one of either Kendall's tau A, B, C or
-#' Kendall's W value, or NULL if there are not at least two factor variables
-#'
-#' @details The association values Kendall's tau A, B, C or Kendall's W are calculated using \code{\link[DescTools]{KendallTauA}},
-#' \code{\link[DescTools]{KendallTauB}}, \code{\link[DescTools]{StuartTauC}} or \code{\link[DescTools]{KendallW}} respectively,from the
-#' \code{DescTools} package, and assumes factor levels are in the given order. NAs are automatically handled by pairwise omit.
-#'
-#' @export
-#'
-#' @examples
-#'  pair_tau(iris)
-#'  pair_tau(iris, method="A")
-#'  pair_tau(iris, method="C")
-#'  pair_tau(iris, method="W")
 
 
 
-pair_tau <- function(d,method=c("B","A","C","W"),...){
-  if (!requireNamespace("DescTools", quietly = TRUE))
-    stop("Please install package 'DescTools' to use pair_tau", call.=FALSE)
-  check_df(d)
-  
-  # automatically does pairwise omit, Kendall
-  method <- method[1]
+
+pair_tau <- function(d,method="B",handle.na=TRUE,...){
+  # automatically does pairwise omit for A,B,C
   d <- dplyr::select(d, dplyr::where(is.factor))
   if(ncol(d)>1){
-    if (method == "all"){
-      B <- pair_tau(d,method="B")
-      A <- pair_tau(d,method="A")
-      C <- pair_tau(d,method="C")
-      W <- pair_tau(d,method="W")
-      dplyr::bind_rows(B,A,C,W)
-    } else {
       a <- pairwise(d, score=paste0("tau", method), pair_type = "ff")
       fns <- c("A"= DescTools::KendallTauA, "B"=DescTools::KendallTauB, "C" = DescTools::StuartTauC, "W"=
                  DescTools::KendallW)
@@ -346,22 +334,124 @@ pair_tau <- function(d,method=c("B","A","C","W"),...){
         if (length(unique(d[[x]])) <= 1) return(NA)
         if (length(unique(d[[y]])) <= 1) return(NA)
         if (method =="W")
-          fn(d[c(x,y)], correct=TRUE)
-        else fn(d[[x]],d[[y]])
+          fn(d[c(x,y)], correct=TRUE, na.rm=handle.na,...)
+        else fn(d[[x]],d[[y]],...)
       }
       a$value <- mapply(fnlocal, a$x,a$y, USE.NAMES = FALSE)
       a
     }
-    
-  }
 }
 
-#' Uncertainty coefficient
+#' Kendall's tau  B for association between ordinal factors.
+#'
+#' Calculates Kendall's tau B every  factor variable pair in a dataset.
+#'
+#' @param d A dataframe
+#' @param ... other arguments
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
+#'
+#' @details Calculated using  \code{\link[DescTools]{KendallTauB}}. Assumes factor levels are in the given order. 
+#' NAs are automatically handled by pairwise omit.
+#' @export
+#' @examples
+
+#'  d <- data.frame(x=rnorm(20), 
+#'                  y=factor(sample(3,20, replace=TRUE)), 
+#'                  z=factor(sample(2,20, replace=TRUE)))
+#'  pair_tauB(d)
+
+pair_tauB <- function(d,handle.na=TRUE,...){
+  if (!requireNamespace("DescTools", quietly = TRUE))
+    stop("Please install package 'DescTools' to use pair_tauB ", call.=FALSE)
+  check_df(d)
+  pair_tau(d, method="B",...)
+}
+
+#' Kendall's tau  A for association between ordinal factors.
+#'
+#' Calculates Kendall's tau A for every  factor variable pair in a dataset.
+#'
+#' @param d A dataframe
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param ... other arguments
+#'
+#' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
+#'
+#' @details Calculated using  \code{\link[DescTools]{KendallTauA}}. Assumes factor levels are in the given order. 
+#' NAs are automatically handled by pairwise omit.
+#' @export
+#' @examples
+#'  d <- data.frame(x=rnorm(20), 
+#'                  y=factor(sample(3,20, replace=TRUE)), 
+#'                  z=factor(sample(2,20, replace=TRUE)))
+#'  pair_tauA(d)
+
+pair_tauA <- function(d,handle.na=TRUE,...){
+  if (!requireNamespace("DescTools", quietly = TRUE))
+    stop("Please install package 'DescTools' to use pair_tauA ", call.=FALSE)
+  check_df(d)
+  pair_tau(d, method="A",...)
+}
+
+#' Stuarts's tau  C for association between ordinal factors.
+#'
+#' Calculates Stuarts's tau C every  factor variable pair in a dataset.
+#'
+#' @param d A dataframe
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param ... other arguments
+#'
+#' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
+#'
+#' @details Calculated using  \code{\link[DescTools]{StuartTauC}}. Assumes factor levels are in the given order. 
+#' NAs are automatically handled by pairwise omit.
+#' @export
+#' @examples
+#'  d <- data.frame(x=rnorm(20), 
+#'                  y=factor(sample(3,20, replace=TRUE)), 
+#'                  z=factor(sample(2,20, replace=TRUE)))
+#'  pair_tauC(d)
+
+pair_tauC <- function(d,handle.na=TRUE,...){
+  if (!requireNamespace("DescTools", quietly = TRUE))
+    stop("Please install package 'DescTools' to use pair_tauC ", call.=FALSE)
+  check_df(d)
+  pair_tau(d, method="C")
+}
+
+#' Kendall's W for association between ordinal factors.
+#'
+#' Calculates Kendall's tau W every  factor variable pair in a dataset.
+#'
+#' @param d A dataframe
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param ... other arguments
+#'
+#' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
+#'
+#' @details Calculated using  \code{\link[DescTools]{KendallW}}. Assumes factor levels are in the given order.
+#'  NAs are automatically handled by pairwise omit.
+#' @export
+#' @examples
+#'  d <- data.frame(x=rnorm(20), 
+#'                  y=factor(sample(3,20, replace=TRUE)), 
+#'                  z=factor(sample(2,20, replace=TRUE)))
+#'  pair_tauW(d)
+
+pair_tauW <- function(d,handle.na=TRUE,...){
+  if (!requireNamespace("DescTools", quietly = TRUE))
+    stop("Please install package 'DescTools' to use pair_tauW ", call.=FALSE)
+  check_df(d)
+  pair_tau(d, method="W")
+}
+
+#' Uncertainty coefficient for association between factors.
 #'
 #' Calculates uncertainty coefficient for every factor variable pair in a dataset.
 #'
 #' @param d A dataframe
-#' @param handle.na If TRUE uses pairwise complete observations to calculate uncertainty coefficient, otherwise NAs not handled.
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with every factor variable pair and uncertainty coefficient value,
@@ -390,18 +480,19 @@ pair_uncertainty <- function(d,handle.na=TRUE,...){
 }
 
 
-#' Goodman Kruskal's Tau
+#' Goodman Kruskal's Tau for association between ordinal factors.
 #'
 #' Calculates Goodman Kruskal's Tau coefficient for every factor variable pair in a dataset.
 #'
 #' @param d A dataframe
-#' @param handle.na If TRUE uses pairwise complete observations, otherwise NAs not handled.
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with Goodman Kruskal's Tau for every factor variable pair,
 #' or NULL if there are not at least two factor variables
 #' @details The Goodman Kruskal's Tau coefficient is calculated using \code{\link[DescTools]{GoodmanKruskalTau}}
-#' function from the \code{DescTools} package.
+#' function from the \code{DescTools} package. Assumes factor levels are in the given order.
+#' NAs are automatically handled by pairwise omit.
 #' @export
 #'
 #' @examples
@@ -415,7 +506,8 @@ pair_gkTau <- function(d,handle.na=TRUE,...){
   d <- dplyr::select(d, dplyr::where(is.factor))
   if(ncol(d)>1){
     a <- pairwise(d, score="gkTau", pair_type = "ff")
-    fnlocal <- function(x,y) max(DescTools::GoodmanKruskalTau(d[[x]],d[[y]]),DescTools::GoodmanKruskalTau(d[[y]],d[[x]]))
+    fnlocal <- function(x,y) 
+      max(DescTools::GoodmanKruskalTau(d[[x]],d[[y]],...),DescTools::GoodmanKruskalTau(d[[y]],d[[x]],...))
     a$value <- mapply(fnlocal, a$x,a$y, USE.NAMES = FALSE)
     a
   }
@@ -423,19 +515,20 @@ pair_gkTau <- function(d,handle.na=TRUE,...){
 }
 
 
-#' Goodman Kruskal's Gamma
+#' Goodman Kruskal's Gamma for association between ordinal factors.
 #'
 #' Calculates Goodman Kruskal's Gamma coefficient for every factor variable pair in a dataset.
 #'
 #' @param d A dataframe
-#' @param handle.na If TRUE uses pairwise complete observations, otherwise NAs not handled.
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with factor variable pairs and Goodman Kruskal's Gamma coefficient, 
 #' or NULL if there are not at least two factor variables
 
 #' @details The Goodman Kruskal's Gamma coefficient is calculated using \code{\link[DescTools]{GoodmanKruskalGamma}}
-#' function from the \code{DescTools} package,and assumes factor levels are in the given order.
+#' function from the \code{DescTools} package. Assumes factor levels are in the given order.
+#'  NAs are automatically handled by pairwise omit.
 #' @export
 #'
 #' @examples
@@ -456,19 +549,19 @@ pair_gkGamma <- function(d,handle.na=TRUE,...){
 
 }
 
-#' Pearson's Contingency Coefficient
+#' Pearson's Contingency Coefficient for association between  factors.
 #'
 #' Calculates Pearson's Contingency coefficient for every factor variable pair in a dataset.
 #'
 #' @param d A dataframe
-#' @param handle.na If TRUE uses pairwise complete observations.
+#' @param handle.na ignored. Pairwise complete observations are used automatically.
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with calculated Pearson's contingency coefficient for every factor variable
 #' pair, or NULL if there are not at least two factor variables
 #' @export
-#' @details The Pearson's contingency coefficient is calculated using \code{\link[DescTools]{ContCoef}}
-#' function from the \code{DescTools} package.
+#' @details The Pearson's contingency coefficient is calculated using \code{\link[DescTools]{ContCoef}}.
+#' NAs are automatically handled by pairwise omit.
 #'
 #' @examples
 #'  pair_chi(iris)
@@ -575,21 +668,24 @@ pair_ace <- function(d, handle.na = T, ...) {
 #'  pair_methods
 
 pair_methods <- dplyr::tribble(
-  ~name, ~nn, ~ff,  ~fn, ~from, ~range, ~comments,
-  "pair_cor", TRUE, FALSE, FALSE, "cor", "[-1,1]", "",
-  "pair_dcor", TRUE, FALSE,  FALSE, "energy::dcor2d", "[0,1]", "",
-  "pair_mine", TRUE, FALSE, FALSE, "minerva::mine", "[0,1]","",
-  "pair_ace", TRUE, TRUE,  TRUE, "acepack::ace", "[0,1]","",
-  "pair_cancor", TRUE, TRUE, TRUE, "cancor", "[0,1]","",
-  "pair_nmi",  TRUE, TRUE,  TRUE, "linkspotter::maxNMI", "[0,1]","",
-  "pair_polychor", FALSE, TRUE, FALSE, "polycor::polychor", "[-1,1]","factors treated as ordinal",
-  "pair_polyserial", FALSE, FALSE, TRUE, "polycor::polyserial", "[-1,1]","factor treated as ordinal",
-  "pair_tau", FALSE, TRUE, FALSE, "DescTools::KendalTauA,B,C,W", "[-1,1]","factors treated as ordinal",
-  "pair_gkGamma", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalGamma", "[-1,1]","factors treated as ordinal",
-  "pair_gkTau", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalTau", "[0,1]","",
-  "pair_uncertainty", FALSE,  TRUE, FALSE, "DescTools::UncertCoef", "[0,1]","",
-  "pair_chi", FALSE,  TRUE,  FALSE, "DescTools::ContCoef", "[0,1]","",
-  "pair_scag", TRUE, FALSE,  FALSE, "scagnostics::scagnostics", "[0,1]","",
+  ~name, ~nn, ~ff,  ~fn, ~from, ~range, ~ordinal,
+  "pair_cor", TRUE, FALSE, FALSE, "cor", "[-1,1]", NA,
+  "pair_dcor", TRUE, FALSE,  FALSE, "energy::dcor2d", "[0,1]", NA,
+  "pair_mine", TRUE, FALSE, FALSE, "minerva::mine", "[0,1]",NA,
+  "pair_ace", TRUE, TRUE,  TRUE, "acepack::ace", "[0,1]",FALSE,
+  "pair_cancor", TRUE, TRUE, TRUE, "cancor", "[0,1]",FALSE,
+  "pair_nmi",  TRUE, TRUE,  TRUE, "linkspotter::maxNMI", "[0,1]",FALSE,
+  "pair_polychor", FALSE, TRUE, FALSE, "polycor::polychor", "[-1,1]",TRUE,
+  "pair_polyserial", FALSE, FALSE, TRUE, "polycor::polyserial", "[-1,1]",TRUE,
+  "pair_tauB", FALSE, TRUE, FALSE, "DescTools::KendalTauB", "[-1,1]",TRUE,
+  "pair_tauA", FALSE, TRUE, FALSE, "DescTools::KendalTauA", "[-1,1]",TRUE,
+  "pair_tauC", FALSE, TRUE, FALSE, "DescTools::StuartTauC", "[-1,1]",TRUE,
+  "pair_tauW", FALSE, TRUE, FALSE, "DescTools::KendalW", "[-1,1]",TRUE,
+  "pair_gkGamma", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalGamma", "[-1,1]",TRUE,
+  "pair_gkTau", FALSE,  TRUE, FALSE, "DescTools::GoodmanKruskalTau", "[0,1]",TRUE,
+  "pair_uncertainty", FALSE,  TRUE, FALSE, "DescTools::UncertCoef", "[0,1]",FALSE,
+  "pair_chi", FALSE,  TRUE,  FALSE, "DescTools::ContCoef", "[0,1]",FALSE,
+  "pair_scag", TRUE, FALSE,  FALSE, "scagnostics::scagnostics", "[0,1]",NA,
 )
 
 
@@ -597,7 +693,7 @@ pair_methods <- dplyr::tribble(
 #'
 #' @param d a dataframe
 #' @param by a character string for the name of the conditioning variable.
-#' @param pair_fun One of the `pair_` functions
+#' @param pair_fun A function returning a `pairwise` from a dataset.
 #' @param ungrouped If TRUE calculates the ungrouped score in addition to grouped scores.
 #'
 #' @return tibble of class "pairwise"
@@ -625,5 +721,5 @@ pairwise_by <- function(d, by, pair_fun, ungrouped=TRUE){
       pair_fun()
     result <- rbind(result, overall)
   }
-  result
+  result |> dplyr::arrange(.data$x, .data$y)
 }

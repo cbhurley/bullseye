@@ -4,13 +4,12 @@
 \alias{pair_mine}
 \title{MINE family values}
 \usage{
-pair_mine(d, method = "mic", handle.na = TRUE, ...)
+pair_mine(d, method = "MIC", handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
-\item{method}{character string for the MINE value to be calculated. Either "mic" (default), "mas", "mev",
-"mcn", or "mic-r2"}
+\item{method}{character vector for the MINE value to be calculated. Subset of "MIC","MAS","MEV","MCN","MICR2", "GMIC",  "TIC"}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate score, otherwise NAs not handled.}
 
@@ -28,7 +27,7 @@ The values are calculated using \code{\link[minerva]{mine}} from \code{minerva}
 }
 \examples{
  pair_mine(iris)
- pair_mine(iris, method="mas")
+ pair_mine(iris, method="MAS")
 }
 \references{
 Reshef, David N., et al. "Detecting novel associations in large data sets."

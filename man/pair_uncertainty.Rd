@@ -2,14 +2,14 @@
 % Please edit documentation in R/pair_methods.R
 \name{pair_uncertainty}
 \alias{pair_uncertainty}
-\title{Uncertainty coefficient}
+\title{Uncertainty coefficient for association between factors.}
 \usage{
 pair_uncertainty(d, handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
-\item{handle.na}{If TRUE uses pairwise complete observations to calculate uncertainty coefficient, otherwise NAs not handled.}
+\item{handle.na}{ignored. Pairwise complete observations are used automatically.}
 
 \item{...}{other arguments}
 }

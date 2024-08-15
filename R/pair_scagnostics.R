@@ -23,7 +23,7 @@
 
 pair_scagnostics <- function(d, scagnostic = c("Outlying","Skewed","Clumpy","Sparse","Striated",
                                         "Convex","Skinny","Stringy","Monotonic"),
-                      handle.na = T, ...) {
+                      handle.na = TRUE, ...) {
   if (!requireNamespace("scagnostics", quietly = TRUE))
     stop("Please install package 'scagnostics' to use pair_scagnostics", call.=FALSE)
   check_df(d)
@@ -52,5 +52,6 @@ pair_scagnostics <- function(d, scagnostic = c("Outlying","Skewed","Clumpy","Spa
   }
   
   scag$value <- as.numeric(t(mapply(scag_fn, scag1$x,scag1$y)))
-  scag
+  scag |> 
+    dplyr::arrange(.data$x, .data$y)
 }

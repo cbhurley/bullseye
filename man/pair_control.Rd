@@ -5,11 +5,10 @@
 \title{Default scores calculated  by \code{pairwise_scores}}
 \usage{
 pair_control(
-  nn = c("pair_cor", "pair_dcor", "pair_mine", "pair_ace", "pair_cancor", "pair_nmi",
-    "pair_scagnostics"),
-  oo = c("pair_polychor", "pair_tau", "pair_gkGamma", "pair_gkTau"),
-  ff = c("pair_cancor", "pair_ace", "pair_nmi", "pair_uncertainty", "pair_chi"),
-  fn = c("pair_cancor", "pair_nmi", "pair_ace"),
+  nn = "pair_cor",
+  oo = "pair_polychor",
+  ff = "pair_cancor",
+  fn = "pair_cancor",
   nnargs = NULL,
   ooargs = NULL,
   ffargs = NULL,

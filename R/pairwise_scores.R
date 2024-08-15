@@ -72,7 +72,6 @@ pairwise_scores  <- function(d,
           if (ncol(dsub)>1 & !is.null(entry$funName)){
             if (is.null(entry$argList))
             m <- do.call(get(entry$funName), list(dsub, handle.na=handle.na))
-            # else m <- do.call(get(entry$funName), append(list(dsub,  handle.na=handle.na), entry$argList))
             else m <- do.call(get(entry$funName), list(dsub,  handle.na=handle.na, entry$argList))
             if (!inherits(m, "pairwise"))
               stop("Calculated pairwise scores must be of type pairwise")
@@ -137,11 +136,10 @@ pairwise_scores  <- function(d,
 #' @export
 #'
 
-pair_control <- function(nn = c("pair_cor","pair_dcor","pair_mine","pair_ace",
-                                "pair_cancor","pair_nmi", "pair_scagnostics" ),
-                         oo = c("pair_polychor", "pair_tau","pair_gkGamma","pair_gkTau"),
-                         ff = c("pair_cancor","pair_ace","pair_nmi", "pair_uncertainty","pair_chi"),
-                         fn = c("pair_cancor", "pair_nmi","pair_ace"),
+pair_control <- function(nn = "pair_cor",
+                         oo = "pair_polychor",
+                         ff = "pair_cancor",
+                         fn = "pair_cancor",
                          nnargs=NULL,  ooargs=NULL, ffargs=NULL,fnargs=NULL){
   
   list(nn=nn[1], fn=fn[1],oo=oo[1], ff=ff[1],nnargs=nnargs,fnargs=fnargs,ooargs=NULL, ffargs=ffargs)

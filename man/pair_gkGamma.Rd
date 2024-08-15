@@ -2,14 +2,14 @@
 % Please edit documentation in R/pair_methods.R
 \name{pair_gkGamma}
 \alias{pair_gkGamma}
-\title{Goodman Kruskal's Gamma}
+\title{Goodman Kruskal's Gamma for association between ordinal factors.}
 \usage{
 pair_gkGamma(d, handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
-\item{handle.na}{If TRUE uses pairwise complete observations, otherwise NAs not handled.}
+\item{handle.na}{ignored. Pairwise complete observations are used automatically.}
 
 \item{...}{other arguments}
 }
@@ -22,7 +22,8 @@ Calculates Goodman Kruskal's Gamma coefficient for every factor variable pair in
 }
 \details{
 The Goodman Kruskal's Gamma coefficient is calculated using \code{\link[DescTools]{GoodmanKruskalGamma}}
-function from the \code{DescTools} package,and assumes factor levels are in the given order.
+function from the \code{DescTools} package. Assumes factor levels are in the given order.
+NAs are automatically handled by pairwise omit.
 }
 \examples{
  pair_gkGamma(iris)

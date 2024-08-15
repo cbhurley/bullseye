@@ -5,7 +5,7 @@
 \alias{pair_methods}
 \title{Pairwise score functions available in the package}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 14 rows and 7 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 17 rows and 7 columns.
 }
 \usage{
 pair_methods

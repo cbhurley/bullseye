@@ -39,4 +39,4 @@ Suggests:
     corrplot
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://cbhurley.github.io/bullseye/
+URL: https://cbhurley.github.io/bullseye/, https://github.com/cbhurley/bullseye

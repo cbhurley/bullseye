@@ -12,6 +12,7 @@ We provide a tidy data structure and visualisations for multiple or grouped vari
 Useful links:
 \itemize{
   \item \url{https://cbhurley.github.io/bullseye/}
+  \item \url{https://github.com/cbhurley/bullseye}
 }
 
 }

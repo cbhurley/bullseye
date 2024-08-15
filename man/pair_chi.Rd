@@ -2,14 +2,14 @@
 % Please edit documentation in R/pair_methods.R
 \name{pair_chi}
 \alias{pair_chi}
-\title{Pearson's Contingency Coefficient}
+\title{Pearson's Contingency Coefficient for association between  factors.}
 \usage{
 pair_chi(d, handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
-\item{handle.na}{If TRUE uses pairwise complete observations.}
+\item{handle.na}{ignored. Pairwise complete observations are used automatically.}
 
 \item{...}{other arguments}
 }
@@ -21,8 +21,8 @@ pair, or NULL if there are not at least two factor variables
 Calculates Pearson's Contingency coefficient for every factor variable pair in a dataset.
 }
 \details{
-The Pearson's contingency coefficient is calculated using \code{\link[DescTools]{ContCoef}}
-function from the \code{DescTools} package.
+The Pearson's contingency coefficient is calculated using \code{\link[DescTools]{ContCoef}}.
+NAs are automatically handled by pairwise omit.
 }
 \examples{
  pair_chi(iris)

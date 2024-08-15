@@ -94,7 +94,7 @@ dcor_nmi <- pairwise_multi(penguins, c("pair_dcor", "pair_nmi"))
 
 ## Calculating grouped measures
 
-For each of the `pair_` functions, they can be wrapped using `pairwise_by` to build a score calculation for each level of a grouping variable. Of course, grouped scores could be calculated using `dplyr` machinery, but it is a bit more work.
+For each of the pairwise calculation functions, they can be wrapped using `pairwise_by` to build a score calculation for each level of a grouping variable. Of course, grouped scores could be calculated using `dplyr` machinery, but it is a bit more work.
 
 ```{r}
 pairwise_by(penguins, by="species", pair_cor)

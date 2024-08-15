@@ -19,12 +19,11 @@ pairwise <- function(x, score=NA_character_, pair_type=NA_character_){
 }
 
 
-pairwise_to_matrix <- function(scores, stat=function(x) diff(range(x,na.rm=TRUE)), default=NA){
+pairwise_to_matrix <- function(scores, stat=dplyr::first, default=NA){
   allvars <- unique(c(scores$x, scores$y))
   
   scores1 <- dplyr::summarise(scores, 
-                              n = dplyr::n(),
-                              measure= if (.data$n > 1) stat(.data$value) else .data$value,
+                               measure= stat(.data$value),
                               .by=dplyr::all_of(c("x","y")))
   scores1 <- scores1[!is.na(scores1$measure),]
   m <- matrix(default, nrow=length(allvars), ncol=length(allvars))

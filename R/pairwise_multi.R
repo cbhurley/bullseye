@@ -5,7 +5,7 @@
 #' Calculates multiple scores for every variable pair in a dataset.
 #'
 #' @param d dataframe
-#' @param scores a vector naming pairwise functions.
+#' @param scores a vector naming functions returning a `pairwise` from a dataset.
 #'
 #' @param handle.na If TRUE uses pairwise complete observations to calculate pairwise score, otherwise NAs not handled.
 #'
@@ -43,6 +43,7 @@ pairwise_multi <- function(d,scores=c("pair_cor", "pair_dcor","pair_mine","pair_
     results <- dplyr::bind_rows(results, taua, tauc, tauw)
   }
 
-  results
+  results |> 
+    dplyr::arrange(.data$x, .data$y)
 
 }

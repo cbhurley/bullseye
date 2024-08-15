@@ -14,7 +14,8 @@
 #' @param interactive defaults to FALSE
 #' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
 #' 
-#' If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values. If some rows have `group=center_level`, then the glyph is drawn as a bullseye.
+#' If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values. 
+#' If some rows have `group=center_level`, then the glyph is drawn as a bullseye.
 #' @examples
 #' plot_pairwise(pair_cor(iris))
 #' plot_pairwise(pairwise_scores(iris,by="Species"))
@@ -31,12 +32,13 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
   var_order <- prep$var_order
   score_label <- prep$score_label
   
-  if (grepl("seriate", var_order[1])) {
-    serfn <- if (var_order[1] == "seriate_max_diff")
-      function(x) diff(range(x, na.rm=TRUE)) else function(x) max(x, na.rm=TRUE)
-    m <- pairwise_to_matrix(scores, serfn, default=0)
-    o <- suppressMessages(DendSer::dser(stats::as.dist(-m), cost = DendSer::costLPL))
-    var_order <- rownames(m)[o]
+  if (length(var_order)==1){
+    if (grepl("seriate", var_order)) {
+      serfn <- if (var_order == "seriate_max_diff") ser_max_diff else ser_max
+      m <- pairwise_to_matrix(scores, serfn, default=0)
+      o <- suppressMessages(DendSer::dser(stats::as.dist(-m), cost = DendSer::costLPL))
+      var_order <- rownames(m)[o]
+    }
   }
   scores$x <- factor(scores$x, levels=var_order)
   scores$y <- factor(scores$y, levels=var_order)
@@ -134,7 +136,7 @@ plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore
   allvars <- unique(c(scores$x, scores$y))
   if (is.null(var_order))
     var_order <- sort(allvars)
-  else if (!grepl("seriate", var_order)) {
+  else if ((length(var_order) == 1) && !grepl("seriate", var_order)) {
     if (length(intersect(allvars, var_order) ==0))
       stop("'var_order' must be NULL, 'seriate_max',  'seriate_max_diff' or a subset of the x and y variables in 'scores'")
     else {
@@ -198,8 +200,7 @@ plot_pairwise_linear <- function(scores,
   
   
   if (grepl("seriate", pair_order)){
-    serfn <- if (pair_order == "seriate_max_diff")
-      function(x) diff(range(x)) else function(x) max(abs(x))
+     serfn <- if (pair_order == "seriate_max_diff") ser_max_diff else ser_max
     ord <- dplyr::summarise(scores,
                      n = dplyr::n(),
                      measure= if (.data$n > 1) serfn(.data$value)  else .data$value,
@@ -239,7 +240,7 @@ plot_pairwise_linear <- function(scores,
                                       show.legend = FALSE)}+
       ylim(score_limits[1],score_limits[2]) +
       coord_flip() +scale_x_discrete(limits=rev) +
-      labs(y = score_label)
+      labs(y = "scores")
   }
   p <- p+ theme(legend.position="bottom", axis.title.y  = element_blank())
   if (interactive) ggiraph::girafe(ggobj=p) else p
@@ -286,6 +287,16 @@ plot.pairwise<- function(x, type=c("matrix", "linear"), ...){
   else if (type[1]=="linear") 
   plot_pairwise_linear(x,...)
 }
+
+
+ser_max_diff <- function(x){
+  if (all(is.na(x))) 0 else diff(range(x, na.rm=TRUE)) 
+}
+
+ser_max <- function(x){
+  if (all(is.na(x))) 0 else max(abs(x), na.rm=TRUE)
+}
+
 
 
 #' Converts a pairwise to a symmetric matrix. Uses the first entry for each (x,y) pair.

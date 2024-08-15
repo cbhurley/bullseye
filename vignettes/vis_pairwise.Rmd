@@ -65,7 +65,6 @@ Alternatively, if you wish to show different association measures for correlatio
 the result of `pairwise_scores`:
 
 ```{r}
-scores <- pairwise_scores(peng)
 plot(pairwise_scores(peng), interactive=TRUE)
 ```
 
@@ -97,7 +96,7 @@ plot(scores, var_order="seriate_max_diff", interactive=TRUE)
 Pairs of numeric variables exhibit Simpsons paradox if the ungrouped correlation is negative and the grouped corelations are positive (or vice-versa). This is present for the pairs (body_mass_mm, bill_depth_mm) and (bill_depth_mm, bill_length_mm).
 
 The island variable is also associated with the penguin dimension variables.
-However, this is mostly because two of the species (Gentoo and Chinstrap) are located on one island only. For these species, the score values for island  and the the other variables is NA, shown in grey.
+However, this is mostly because two of the species (Gentoo and Chinstrap) are located on one island only. For these species, the score values for island  and the  other variables is NA, shown in grey.
 
 
 
@@ -197,11 +196,11 @@ a <- ace_cor(acs12$income, acs12$employment)
 plot(a$x, a$tx)
 ```
 
-Similarly `age:income` has a high ace score, and a plot of these two variables shows income goes up with aage until about age 40 and then drops off.
+Similarly `age:income` has a high ace score, and a plot of these two variables shows income goes up with age until about age 40 and then drops off.
 
 
 
-Next, we calculate scores by race and filter those x,y pairs with high differences:
+Next, we calculate scores by race and filter those x,y pairs with high values and high differences:
 
 ```{r}
 group_scores <- pairwise_scores(acs12, by = "race")
@@ -223,17 +222,17 @@ mutate(group_scores, valrange = rng(value),valmax = max(abs(value)), .by=c(x,y))
 Asians have much higher association than other groups for many of the variables.
 Employed Asians report much higher hours worked:
 
-```{r}
+```{r, fig.width=8}
 ggplot(data=acs12, aes(x=employment, y=hrs_work))+
   geom_boxplot()+
-  facet_grid(rows=vars(race)) # NA col is because for employed=NA, there  hrs_work also NA
+  facet_grid(cols=vars(race)) +scale_x_discrete(na.translate = FALSE)
 ```
 
 For Asians, there is a big difference in travel time to work for genders compared to other races.
 ```{r, fig.height=3}
 ggplot(data=acs12, aes(x=gender, y=time_to_work))+
   geom_boxplot()+
-  facet_grid(cols=vars(race))
+  facet_grid(cols=vars(race)) 
 ```
 
 For Asians, there is a big difference in income across genders compared to other races.
