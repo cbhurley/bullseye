@@ -19,10 +19,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/calc_pairwise.html">Calculating pairwise scores using bullseye.</a></li>
+    <li><a class="dropdown-item" href="../articles/integrating.html">Integrating bullseye with other packages.</a></li>
     <li><a class="dropdown-item" href="../articles/vis_pairwise.html">Visualising pairwise scores using bullseye.</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/cbhurley/bullseye/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -32,7 +35,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Constructs a pairwise result for each level of a by variable.</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/cbhurley/bullseye/blob/main/R/pair_methods.R" class="external-link"><code>R/pair_methods.R</code></a></small>
       <div class="d-none name"><code>pairwise_by.Rd</code></div>
     </div>
 
@@ -58,7 +61,7 @@
 
 
 <dt id="arg-pair-fun">pair_fun<a class="anchor" aria-label="anchor" href="#arg-pair-fun"></a></dt>
-<dd><p>One of the <code>pair_</code> functions</p></dd>
+<dd><p>A function returning a <code>pairwise</code> from a dataset.</p></dd>
 
 
 <dt id="arg-ungrouped">ungrouped<a class="anchor" aria-label="anchor" href="#arg-ungrouped"></a></dt>
@@ -76,15 +79,15 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 24 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    x            y            score   group      value pair_type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Petal.Length Sepal.Length pearson setosa     0.267 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Petal.Width  Sepal.Length pearson setosa     0.278 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Sepal.Length Sepal.Width  pearson setosa     0.743 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Petal.Length Sepal.Width  pearson setosa     0.178 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Petal.Width  Sepal.Width  pearson setosa     0.233 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Petal.Length Petal.Width  pearson setosa     0.332 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Petal.Length Sepal.Length pearson versicolor 0.754 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Petal.Width  Sepal.Length pearson versicolor 0.546 nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Sepal.Length Sepal.Width  pearson versicolor 0.526 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Petal.Length Petal.Width  pearson setosa     0.332 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Petal.Length Petal.Width  pearson versicolor 0.787 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Petal.Length Petal.Width  pearson virginica  0.322 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Petal.Length Petal.Width  pearson all        0.963 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Petal.Length Sepal.Length pearson setosa     0.267 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Petal.Length Sepal.Length pearson versicolor 0.754 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Petal.Length Sepal.Length pearson virginica  0.864 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Petal.Length Sepal.Length pearson all        0.872 nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Petal.Length Sepal.Width  pearson setosa     0.178 nn       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Petal.Length Sepal.Width  pearson versicolor 0.561 nn       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more rows</span></span>
 <span class="r-in"><span></span></span>

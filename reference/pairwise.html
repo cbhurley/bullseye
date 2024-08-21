@@ -19,10 +19,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/calc_pairwise.html">Calculating pairwise scores using bullseye.</a></li>
+    <li><a class="dropdown-item" href="../articles/integrating.html">Integrating bullseye with other packages.</a></li>
     <li><a class="dropdown-item" href="../articles/vis_pairwise.html">Visualising pairwise scores using bullseye.</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/cbhurley/bullseye/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -32,7 +35,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>A generic function to create a data structure for every variable pair in a dataset</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/cbhurley/bullseye/blob/main/R/pairwise.R" class="external-link"><code>R/pairwise.R</code></a></small>
       <div class="d-none name"><code>pairwise.Rd</code></div>
     </div>
 
@@ -50,6 +53,9 @@
 <span><span class="co"># S3 method for class 'data.frame'</span></span>
 <span><span class="fu">pairwise</span><span class="op">(</span><span class="va">x</span>, score <span class="op">=</span> <span class="cn">NA_character_</span>, pair_type <span class="op">=</span> <span class="cn">NA_character_</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for class 'easycorrelation'</span></span>
+<span><span class="fu">pairwise</span><span class="op">(</span><span class="va">x</span>, score <span class="op">=</span> <span class="cn">NA_character_</span>, pair_type <span class="op">=</span> <span class="cn">NA_character_</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">as.pairwise</span><span class="op">(</span><span class="va">x</span>, score <span class="op">=</span> <span class="cn">NA_character_</span>, pair_type <span class="op">=</span> <span class="cn">NA_character_</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -62,7 +68,7 @@
 
 
 <dt id="arg-score">score<a class="anchor" aria-label="anchor" href="#arg-score"></a></dt>
-<dd><p>a character string indicating the value of association.</p></dd>
+<dd><p>a character string indicating the value of association, either "nn", "fn", "ff".</p></dd>
 
 
 <dt id="arg-pair-type">pair_type<a class="anchor" aria-label="anchor" href="#arg-pair-type"></a></dt>
@@ -79,6 +85,7 @@
 
 <ul><li><p><code>pairwise(matrix)</code>: pairwise method</p></li>
 <li><p><code>pairwise(data.frame)</code>: pairwise method</p></li>
+<li><p><code>pairwise(easycorrelation)</code>: pairwise method</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>

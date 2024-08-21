@@ -23,10 +23,13 @@ variable pair at different levels of the grouping variable are calculated."></he
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/calc_pairwise.html">Calculating pairwise scores using bullseye.</a></li>
+    <li><a class="dropdown-item" href="../articles/integrating.html">Integrating bullseye with other packages.</a></li>
     <li><a class="dropdown-item" href="../articles/vis_pairwise.html">Visualising pairwise scores using bullseye.</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/cbhurley/bullseye/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -36,7 +39,7 @@ variable pair at different levels of the grouping variable are calculated."></he
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Calculates scores or conditional scores for a dataset</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/cbhurley/bullseye/blob/main/R/pairwise_scores.R" class="external-link"><code>R/pairwise_scores.R</code></a></small>
       <div class="d-none name"><code>pairwise_scores.Rd</code></div>
     </div>
 
@@ -100,13 +103,14 @@ canonical correlation for factor or mixed pairs, and polychoric correlation for 
 <span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>fn<span class="op">=</span><span class="st">"pair_ace"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#Lots of numerical measures</span></span></span>
-<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pair_multi"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pair_multi"</span>, nnargs<span class="op">=</span><span class="st">"pair_cor"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pairwise_multi"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, </span></span>
+<span class="r-in"><span>             control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pairwise_multi"</span>,  nnargs<span class="op">=</span><span class="st">"pair_cor"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#conditional measures</span></span></span>
 <span class="r-in"><span><span class="va">cond_iris</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, by <span class="op">=</span> <span class="st">"Species"</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="va">cond_iris_wo</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, by <span class="op">=</span> <span class="st">"Species"</span>,ungrouped<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="co"># without overall</span></span></span>
-<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pair_multi"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, by <span class="op">=</span> <span class="st">"Species"</span>,control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pair_multi"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pairwise_multi"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">irisc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, by <span class="op">=</span> <span class="st">"Species"</span>,control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pairwise_multi"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#scagnostics</span></span></span>
 <span class="r-in"><span><span class="va">sc</span> <span class="op">&lt;-</span> <span class="fu">pairwise_scores</span><span class="op">(</span><span class="va">iris</span>, control<span class="op">=</span><span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pair_scagnostics"</span>, fn<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span><span class="op">)</span> <span class="co"># ignore fn pairs</span></span></span>

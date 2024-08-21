@@ -3,8 +3,9 @@ pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   calc_pairwise: calc_pairwise.html
+  integrating: integrating.html
   vis_pairwise: vis_pairwise.html
-last_built: 2024-07-24T15:41Z
+last_built: 2024-08-21T16:02Z
 urls:
   reference: https://cbhurley.github.io/bullseye/reference
   article: https://cbhurley.github.io/bullseye/articles

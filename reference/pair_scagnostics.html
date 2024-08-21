@@ -19,10 +19,13 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/calc_pairwise.html">Calculating pairwise scores using bullseye.</a></li>
+    <li><a class="dropdown-item" href="../articles/integrating.html">Integrating bullseye with other packages.</a></li>
     <li><a class="dropdown-item" href="../articles/vis_pairwise.html">Visualising pairwise scores using bullseye.</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/cbhurley/bullseye/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -32,7 +35,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Graph-theoretic scagnostics values</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/cbhurley/bullseye/blob/main/R/pair_scagnostics.R" class="external-link"><code>R/pair_scagnostics.R</code></a></small>
       <div class="d-none name"><code>pair_scagnostics.Rd</code></div>
     </div>
 
@@ -46,7 +49,7 @@
 <span>  <span class="va">d</span>,</span>
 <span>  scagnostic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Outlying"</span>, <span class="st">"Skewed"</span>, <span class="st">"Clumpy"</span>, <span class="st">"Sparse"</span>, <span class="st">"Striated"</span>, <span class="st">"Convex"</span>,</span>
 <span>    <span class="st">"Skinny"</span>, <span class="st">"Stringy"</span>, <span class="st">"Monotonic"</span><span class="op">)</span>,</span>
-<span>  handle.na <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  handle.na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -93,18 +96,18 @@ Information Visualization, IEEE Symposium on. IEEE Computer Society, 2005</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="fu">pair_scagnostics</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 54 × 6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    x            y            score    group  value pair_type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Petal.Length Sepal.Length Outlying all   0.247  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Petal.Width  Sepal.Length Outlying all   0.076<span style="text-decoration: underline;">7</span> nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Sepal.Length Sepal.Width  Outlying all   0.168  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Petal.Length Sepal.Width  Outlying all   0.263  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Petal.Width  Sepal.Width  Outlying all   0.451  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Petal.Length Petal.Width  Outlying all   0.048<span style="text-decoration: underline;">4</span> nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Petal.Length Sepal.Length Skewed   all   0.643  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Petal.Width  Sepal.Length Skewed   all   0.743  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Sepal.Length Sepal.Width  Skewed   all   0.736  nn       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Petal.Length Sepal.Width  Skewed   all   0.578  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    x            y            score     group  value pair_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> Petal.Length Petal.Width  Outlying  all   0.048<span style="text-decoration: underline;">4</span> nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> Petal.Length Petal.Width  Skewed    all   0.428  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> Petal.Length Petal.Width  Clumpy    all   0.549  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> Petal.Length Petal.Width  Sparse    all   0.050<span style="text-decoration: underline;">7</span> nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> Petal.Length Petal.Width  Striated  all   0.108  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> Petal.Length Petal.Width  Convex    all   0.316  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> Petal.Length Petal.Width  Skinny    all   0.662  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> Petal.Length Petal.Width  Stringy   all   0.393  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> Petal.Length Petal.Width  Monotonic all   0.889  nn       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> Petal.Length Sepal.Length Outlying  all   0.247  nn       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 44 more rows</span></span>
 </code></pre></div>
     </div>
