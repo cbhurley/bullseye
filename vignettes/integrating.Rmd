@@ -26,8 +26,7 @@ Conversely, we show how correlation or correlation-like information provided by 
 
 
 ```{r setup, message=FALSE}
-if (!requireNamespace("palmerpenguins", quietly = TRUE))
-  install.packages("palmerpenguins")
+# install.packages("palmerpenguins")
 
 library(bullseye)
 library(dplyr)
@@ -78,17 +77,17 @@ linkspotter::linkspotterGraphOnMatrix(as.data.frame(as.matrix(sc)),minCor=0.7)
 The `correlation` package offers calculation of a variety of correlations, including partial correlations, Bayesian correlations, multilevel correlations, polychoric correlations, biweight, percentage bend or Sheperd’s Pi correlations, distance correlation and more. The output data structure is a tidy dataframe with a correlation value and correlation tests for variable pairs for which the correlation method is defined. This is converted to `pairwise` via the `as.pairwise` method.
 
 ```{r}
-
-sc_cor <- correlation::correlation(peng, method = "distance")
+# install.packages("correlation")
+library(correlation)
+sc_cor <- correlation(peng, method = "distance")
 plot(as.pairwise(sc_cor))
 ```
 
 Multiple measures from `correlation` can also be used:
 ```{r}
 sc_multi<- bind_rows(
-  as.pairwise(correlation::correlation(peng, method = "pearson")),
-  as.pairwise(correlation::correlation(peng, method = "blomqvist")),
-  as.pairwise(correlation::correlation(peng, method = "biweight")))
+  as.pairwise(correlation(peng, method = "pearson")),
+  as.pairwise(correlation(peng, method = "biweight")))
 plot(sc_multi)
 ```
 

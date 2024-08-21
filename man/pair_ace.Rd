@@ -4,7 +4,7 @@
 \alias{pair_ace}
 \title{Alternating conditional expectations correlation}
 \usage{
-pair_ace(d, handle.na = T, ...)
+pair_ace(d, handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}

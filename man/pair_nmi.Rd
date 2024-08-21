@@ -4,7 +4,7 @@
 \alias{pair_nmi}
 \title{Normalized mutual information}
 \usage{
-pair_nmi(d, handle.na = T, ...)
+pair_nmi(d, handle.na = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}

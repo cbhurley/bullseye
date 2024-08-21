@@ -13,22 +13,28 @@ test_that("pair cancor", {
 })
 
 test_that("pair dcor", {
-  p <- pair_dcor(iris[1:4,])
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(6L,6L))
+  if (requireNamespace("energy", quietly = TRUE)){
+    p <- pair_dcor(iris[1:4,])
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(6L,6L))
+  }
 })
 
 
 test_that("pair mine", {
-  p <- pair_mine(iris[c(1,2,51,52,53),])
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(6L,6L))
+  if (requireNamespace("minerva", quietly = TRUE)){
+    p <- pair_mine(iris[c(1,2,51,52,53),])
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(6L,6L))
+  }
 })
 
 test_that("pair nmi", {
-  p <- pair_nmi(iris[1:4,])
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(10L,6L))
+  if (requireNamespace("linkspotter", quietly = TRUE)){
+    p <- pair_nmi(iris[1:4,])
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(10L,6L))
+  }
 })
 
 test_that("pair polychor", {
@@ -48,29 +54,33 @@ test_that("pair polyserial", {
 })
 
 test_that("pair tau", {
-  iris1 <- iris[c(1,2,53,55),]
-  iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
-  p <- pair_tauB(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
-  p <- pair_tauA(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
-  p <- pair_tauC(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
-  p <- pair_tauW(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
+  if (requireNamespace("DescTools", quietly = TRUE)){
+    iris1 <- iris[c(1,2,53,55),]
+    iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
+    p <- pair_tauB(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+    p <- pair_tauA(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+    p <- pair_tauC(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+    p <- pair_tauW(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+  }
 })
 
 
 test_that("pair uncertainty", {
-  iris1 <- iris[c(1,2,53,55),]
-  iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
-  p <- pair_uncertainty(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
+  if (requireNamespace("DescTools", quietly = TRUE)){
+    iris1 <- iris[c(1,2,53,55),]
+    iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
+    p <- pair_uncertainty(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+  }
 })
 
 test_that("pair gkTau", {
@@ -83,25 +93,31 @@ test_that("pair gkTau", {
 
 
 test_that("pair gkGamma", {
-  iris1 <- iris[c(1,2,53,55),]
-  iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
-  p <- pair_gkGamma(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
+  if (requireNamespace("DescTools", quietly = TRUE)){
+    iris1 <- iris[c(1,2,53,55),]
+    iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
+    p <- pair_gkGamma(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+  }
 })
 
 test_that("pair chi", {
-  iris1 <- iris[c(1,2,53,55),]
-  iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
-  p <- pair_chi(droplevels(iris1))
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(1L,6L))
+  if (requireNamespace("DescTools", quietly = TRUE)){
+    iris1 <- iris[c(1,2,53,55),]
+    iris1$Sepal.Length <- cut(iris1$Sepal.Length,2)
+    p <- pair_chi(droplevels(iris1))
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(1L,6L))
+  }
 })
 
 test_that("pair ace", {
-  p <- pair_ace(iris[c(1,2,53,55),])
-  expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(10L,6L))
+  if (requireNamespace("acepack", quietly = TRUE)){
+    p <- pair_ace(iris[c(1,2,53,55),])
+    expect_s3_class(p, "pairwise")
+    expect_identical(dim(p), c(10L,6L))
+  }
 })
 
 

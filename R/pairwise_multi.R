@@ -21,7 +21,7 @@
 pairwise_multi <- function(d,scores=c("pair_cor", "pair_dcor","pair_mine","pair_ace",
                                     "pair_cancor","pair_nmi","pair_uncertainty",
                                     "pair_chi"),
-                         handle.na=T) {
+                         handle.na=TRUE) {
   check_df(d)
   results <- vector("list", length(scores))
   for (i in 1:length(scores)){

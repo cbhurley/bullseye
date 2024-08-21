@@ -216,7 +216,7 @@ pair_mine <- function(d, method="MIC",handle.na=TRUE,...){
 #' pair_nmi(iris)
 
 
-pair_nmi <- function(d,handle.na=T,...){
+pair_nmi <- function(d,handle.na=TRUE,...){
   if (!requireNamespace("linkspotter", quietly = TRUE))
     stop("Please install package 'linkspotter' to use pair_nmi",call.=FALSE)
   check_df(d)
@@ -587,7 +587,7 @@ pair_chi <- function(d,handle.na=TRUE,...){
 #' @param y a numeric vector or factor
 #' @param handle.na  If TRUE uses pairwise complete observations.
 #'
-#' @return result of `acepack::ace`
+#' @return result of acepack::ace
 #' @export
 #'
 #' @examples ace_cor(iris$Sepal.Length, iris$Species)
@@ -635,7 +635,7 @@ ace_cor <- function(x,y,handle.na=TRUE) {
 #' @examples
 #'  pair_ace(iris)
 
-pair_ace <- function(d, handle.na = T, ...) {
+pair_ace <- function(d, handle.na = TRUE, ...) {
   if (!requireNamespace("acepack", quietly = TRUE))
     stop("Please install package 'acepack' to use pair_acepack", call.=FALSE)
   check_df(d)

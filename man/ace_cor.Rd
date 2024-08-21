@@ -14,7 +14,7 @@ ace_cor(x, y, handle.na = TRUE)
 \item{handle.na}{If TRUE uses pairwise complete observations.}
 }
 \value{
-result of \code{acepack::ace}
+result of acepack::ace
 }
 \description{
 Calculates ace based transformations and correlation, handling missing values and factors.
