@@ -6,7 +6,7 @@ Authors@R:
     person(given = "Catherine", family = "Hurley", email = "catherine.hurley@mu.ie", role = c("aut", "cre")))
 Description: We provide a tidy data structure and visualisations for multiple or grouped  variable correlations, 
     general association measures scagnostics and other pairwise scores  suitable for numerical, ordinal and nominal variables. 
-    Supported measures include distance correlation, maximal information, ace correlation, Kendall's tau, and polychoric corrrelation.
+    Supported measures include distance correlation, maximal information, ace correlation, Kendall's tau, and polychoric correlation.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
