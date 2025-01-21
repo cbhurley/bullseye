@@ -1,6 +1,6 @@
 Package: bullseye
 Title: Visualising Multiple Pairwise Variable Correlations and Other Scores
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     c(person(given = "Amit", family = "Chinwan", email = "amit.chinwan.2019@mumail.ie", role = c("aut")),
     person(given = "Catherine", family = "Hurley", email = "catherine.hurley@mu.ie", role = c("aut", "cre")))

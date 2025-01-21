@@ -23,5 +23,7 @@ Calculates normalized mutual information for every numeric or factor or mixed va
 The normalized mutual information is calculated using \code{\link[linkspotter]{maxNMI}} from linkpotter package
 }
 \examples{
-pair_nmi(iris)
+if (requireNamespace("linkspotter", quietly = TRUE)) { 
+   pair_nmi(iris)
+}
 }

@@ -213,8 +213,9 @@ pair_mine <- function(d, method="MIC",handle.na=TRUE,...){
 #' @export
 #'
 #' @examples
-#' pair_nmi(iris)
-
+#' if (requireNamespace("linkspotter", quietly = TRUE)) { 
+#'    pair_nmi(iris)
+#' }
 
 pair_nmi <- function(d,handle.na=TRUE,...){
   if (!requireNamespace("linkspotter", quietly = TRUE))
@@ -633,8 +634,7 @@ ace_cor <- function(x,y,handle.na=TRUE) {
 #' Journal of the American statistical Association 80.391 (1985): 580-598.
 #'
 #' @examples
-#'  pair_ace(iris)
-
+#' pair_ace(iris)
 pair_ace <- function(d, handle.na = TRUE, ...) {
   if (!requireNamespace("acepack", quietly = TRUE))
     stop("Please install package 'acepack' to use pair_acepack", call.=FALSE)

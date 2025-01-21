@@ -19,7 +19,7 @@
 #' "Graph-theoretic scagnostics."
 #' Information Visualization, IEEE Symposium on. IEEE Computer Society, 2005
 #' @examples
-#'  pair_scagnostics(iris)
+#' pair_scagnostics(iris)
 
 pair_scagnostics <- function(d, scagnostic = c("Outlying","Skewed","Clumpy","Sparse","Striated",
                                         "Convex","Skinny","Stringy","Monotonic"),

@@ -6,7 +6,7 @@
 \alias{bullseye-package}
 \title{bullseye: Visualising Multiple Pairwise Variable Correlations and Other Scores}
 \description{
-We provide a tidy data structure and visualisations for multiple or grouped variable correlations, general association measures scagnostics and other pairwise scores suitable for numerical, ordinal and nominal variables. Supported measures include distance correlation, maximal information, ace correlation, Kendall's tau, and polychoric corrrelation.
+We provide a tidy data structure and visualisations for multiple or grouped variable correlations, general association measures scagnostics and other pairwise scores suitable for numerical, ordinal and nominal variables. Supported measures include distance correlation, maximal information, ace correlation, Kendall's tau, and polychoric correlation.
 }
 \seealso{
 Useful links:

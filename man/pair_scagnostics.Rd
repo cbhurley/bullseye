@@ -34,7 +34,7 @@ The scagnostic values are calculated using \code{\link[scagnostics]{scagnostics}
 function from the \code{scagnostics} package.
 }
 \examples{
- pair_scagnostics(iris)
+pair_scagnostics(iris)
 }
 \references{
 Wilkinson, Leland, Anushka Anand, and Robert Grossman.

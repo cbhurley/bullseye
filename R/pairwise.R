@@ -41,7 +41,8 @@ pairwise.matrix <- function(x, score=NA_character_, pair_type=NA_character_){
  
   xindex <- as.vector(row(m))
   yindex <- as.vector(col(m))
-  rnames <- rownames(m) %||% paste0("V", seq_along(xindex))
+  rnames <- rownames(m) 
+  if (is.null(rnames)) rnames <-  paste0("V", seq_along(xindex))
   d <- dplyr::tibble(x=rnames[xindex], y= rnames[yindex],
                      score=score, group="all", value=as.vector(m),pair_type=pair_type)
   class(d)<-append("pairwise", class(d))

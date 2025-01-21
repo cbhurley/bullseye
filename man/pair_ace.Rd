@@ -27,7 +27,7 @@ is maximised. The \code{\link[acepack]{ace}} function from \code{acepack} packag
 calculation.
 }
 \examples{
- pair_ace(iris)
+pair_ace(iris)
 }
 \references{
 Breiman, Leo, and Jerome H. Friedman.
