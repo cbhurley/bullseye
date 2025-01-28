@@ -106,12 +106,12 @@ test_that("pair chi", {
   expect_identical(dim(p), c(1L,6L))
 })
 
-# test_that("pair ace", {
-#   skip_if_not(requireNamespace("acepack", quietly = TRUE), message = "Package acepack not available.")
-#   p <- pair_ace(iris[c(1:10,53:65),])
-#   expect_s3_class(p, "pairwise")
-#   expect_identical(dim(p), c(10L,6L))
-# })
+test_that("pair ace", {
+  skip_if_not(requireNamespace("acepack", quietly = TRUE), message = "Package acepack not available.")
+  p <- pair_ace(iris)
+  expect_s3_class(p, "pairwise")
+  expect_identical(dim(p), c(10L,6L))
+})
 
 
 test_that("pair multi", {

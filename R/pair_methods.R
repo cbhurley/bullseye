@@ -335,7 +335,9 @@ pair_tau <- function(d,method="B",handle.na=TRUE,...){
         if (length(unique(d[[x]])) <= 1) return(NA)
         if (length(unique(d[[y]])) <= 1) return(NA)
         if (method =="W")
-          fn(d[c(x,y)], correct=TRUE, na.rm=handle.na,...)
+          # fn(d[c(x,y)], correct=TRUE, na.rm=handle.na,...)
+          # version DescTools 0.99.59 compatibility
+          fn(cbind(as.integer(d[[x]]),as.integer(d[[y]])), correct=TRUE,...)
         else fn(d[[x]],d[[y]],...)
       }
       a$value <- mapply(fnlocal, a$x,a$y, USE.NAMES = FALSE)
