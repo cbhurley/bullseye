@@ -611,6 +611,8 @@ ace_cor <- function(x,y,handle.na=TRUE) {
     y <- as.numeric(y)
     cat <- c(cat,0)
   }
+  if (isTRUE(all.equal(min(x), max(x)))) return(NA)
+  if (isTRUE(all.equal(min(y), max(y)))) return(NA)
   acepack::ace(x,y, cat=cat)
   
 }
@@ -647,9 +649,11 @@ pair_ace <- function(d, handle.na = TRUE, ...) {
     ace_fn <- function(x,y) {
       x <- d[[x]]
       y <- d[[y]]
-      s <- max(0,ace_cor(x,y,handle.na=handle.na)[["rsq"]]) # sometimes acepack gives very small negatives
-      sqrt(s)
-    }
+      s <- ace_cor(x,y,handle.na=handle.na)
+      if (identical(s,NA))
+        NA
+      else sqrt(max(0,s[["rsq"]])) # sometimes acepack gives very small negatives
+     }
 
     ace_score$value <- mapply(ace_fn, ace_score$x,ace_score$y, USE.NAMES = FALSE)
     ace_score
