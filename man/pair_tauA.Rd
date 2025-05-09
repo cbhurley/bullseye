@@ -4,12 +4,14 @@
 \alias{pair_tauA}
 \title{Kendall's tau  A for association between ordinal factors.}
 \usage{
-pair_tauA(d, handle.na = TRUE, ...)
+pair_tauA(d, handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
 \item{handle.na}{ignored. Pairwise complete observations are used automatically.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

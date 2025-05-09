@@ -4,7 +4,7 @@
 \alias{pair_mine}
 \title{MINE family values}
 \usage{
-pair_mine(d, method = "MIC", handle.na = TRUE, ...)
+pair_mine(d, method = "MIC", handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
@@ -12,6 +12,8 @@ pair_mine(d, method = "MIC", handle.na = TRUE, ...)
 \item{method}{character vector for the MINE value to be calculated. Subset of "MIC","MAS","MEV","MCN","MICR2", "GMIC",  "TIC"}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate score, otherwise NAs not handled.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

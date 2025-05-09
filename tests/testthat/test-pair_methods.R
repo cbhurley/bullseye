@@ -6,14 +6,14 @@ test_that("pair cor", {
 })
 
 test_that("pair cancor", {
-  p <- pair_cancor(iris[1:4,])
+  p <- pair_cancor(iris[c(1,2,51,52,53),])
   expect_s3_class(p, "pairwise")
   expect_identical(dim(p), c(10L,6L))
 })
 
 test_that("pair dcor", {
   skip_if_not(requireNamespace("energy", quietly = TRUE), message = "Package energy not available.")
-    p <- pair_dcor(iris[1:4,])
+    p <- pair_dcor(iris[c(1,2,51,52,53),])
     expect_s3_class(p, "pairwise")
     expect_identical(dim(p), c(6L,6L))
 })
@@ -28,7 +28,7 @@ test_that("pair mine", {
 
 test_that("pair nmi", {
   skip_if_not(requireNamespace("linkspotter", quietly = TRUE), message = "Package linkspotter not available.")
-  p <- pair_nmi(iris[1:4,])
+  p <- pair_nmi(iris[c(1,2,51,52,53),])
   expect_s3_class(p, "pairwise")
   expect_identical(dim(p), c(10L,6L))
 })
@@ -117,6 +117,6 @@ test_that("pair ace", {
 test_that("pair multi", {
   p <- pairwise_multi(iris, scores=c("pair_cor", "pair_cancor"))
   expect_s3_class(p, "pairwise")
-  expect_identical(dim(p), c(22L,6L))
+  expect_identical(dim(p), c(16L,6L))
 })
 

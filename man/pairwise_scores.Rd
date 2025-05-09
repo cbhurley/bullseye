@@ -9,7 +9,9 @@ pairwise_scores(
   by = NULL,
   ungrouped = TRUE,
   control = pair_control(),
-  handle.na = TRUE
+  handle.na = TRUE,
+  warnings = TRUE,
+  add.nobs = FALSE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ If TRUE calculates the ungrouped score in addition to grouped scores.}
 canonical correlation for factor or mixed pairs, and polychoric correlation for two ordered factors.}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate measure of association.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
+
+\item{add.nobs}{If TRUE, adds an extra column containing the number of observations used for each score.}
 }
 \value{
 A tibble with class \code{pairwise}.

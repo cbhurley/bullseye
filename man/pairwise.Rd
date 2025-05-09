@@ -6,7 +6,7 @@
 \alias{pairwise.data.frame}
 \alias{pairwise.easycorrelation}
 \alias{as.pairwise}
-\title{A generic function to create a data structure for every variable pair in a dataset}
+\title{A generic function to create a data structure for summarising  variable pairs in a dataset}
 \usage{
 pairwise(x, score = NA_character_, pair_type = NA_character_)
 
@@ -21,9 +21,10 @@ as.pairwise(x, score = NA_character_, pair_type = NA_character_)
 \arguments{
 \item{x}{A dataframe or symmetric matrix.}
 
-\item{score}{a character string indicating the value of association, either "nn", "fn", "ff".}
+\item{score}{a character string indicating the value of association}
 
-\item{pair_type}{a character string specifying the type of variable pair.}
+\item{pair_type}{a character string specifying the type of variable pair, should be either "nn", "fn", "ff",
+for a numeric-numeric pair, factor-numeric pair, or factor-factor pair, or NA if unknown.}
 }
 \value{
 A tbl_df of class \code{pairwise} for pairs of variables with a column \code{value} for the score value,
@@ -31,6 +32,19 @@ A tbl_df of class \code{pairwise} for pairs of variables with a column \code{val
 }
 \description{
 Creates a data structure for every variable pair in a dataset.
+}
+\details{
+The \code{pairwise} class has columns x and y for (ordered pairs) of variables, where x < y.
+The column score has the name of the summary measure used for the two variables,
+and the column value has the associated value.
+The group column defaults to "all", meaning summary measures apply to the complete dataset,
+otherwise it describes a subset of the data.
+The functions \verb{pair_*} calculate pairwise tibbles for the summary measure named by \code{*}, eg \code{\link[=pair_cor]{pair_cor()}}, \code{\link[=pair_cancor]{pair_cancor()}}.
+The functions \code{\link[=pairwise_scores]{pairwise_scores()}} and \code{\link[=pairwise_by]{pairwise_by()}} calculate pairwise tibbles for levels of a grouping variable.
+The function \code{\link[=pairwise_multi]{pairwise_multi()}} calculates a pairwise_tibble for multiple named scores.
+The pairwise tibble has at most one row for each combination of x, y, score and group.
+This is checked prior to plotting by \code{plot.pairwise}.
+Note that the pair_type column is included for information purposes, but it is not currently used by \code{plot.pairwise}.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -49,4 +63,8 @@ Creates a data structure for every variable pair in a dataset.
 \examples{
 pairwise(cor(iris[,1:4]), score="pearson")
 pairwise(iris)
+pair_cor(iris)
+pair_cancor(iris)
+pairwise_scores(iris, by="Species")
+pairwise_multi(iris)
 }

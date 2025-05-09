@@ -4,12 +4,14 @@
 \alias{pair_chi}
 \title{Pearson's Contingency Coefficient for association between  factors.}
 \usage{
-pair_chi(d, handle.na = TRUE, ...)
+pair_chi(d, handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
 \item{handle.na}{ignored. Pairwise complete observations are used automatically.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

@@ -4,12 +4,14 @@
 \alias{pair_ace}
 \title{Alternating conditional expectations correlation}
 \usage{
-pair_ace(d, handle.na = TRUE, ...)
+pair_ace(d, handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
 \item{handle.na}{If TRUE uses pairwise complete observations, otherwise NAs not handled.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

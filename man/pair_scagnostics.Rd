@@ -9,6 +9,7 @@ pair_scagnostics(
   scagnostic = c("Outlying", "Skewed", "Clumpy", "Sparse", "Striated", "Convex",
     "Skinny", "Stringy", "Monotonic"),
   handle.na = TRUE,
+  warnings = TRUE,
   ...
 )
 }
@@ -19,6 +20,8 @@ pair_scagnostics(
 "Stringy", "Striated", "Clumpy", "Sparse", "Skewed", "Convex", "Skinny" or "Monotonic"}
 
 \item{handle.na}{If TRUE uses pairwise complete observations.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

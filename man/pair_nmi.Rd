@@ -4,12 +4,14 @@
 \alias{pair_nmi}
 \title{Normalized mutual information}
 \usage{
-pair_nmi(d, handle.na = TRUE, ...)
+pair_nmi(d, handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate normalized mutual information, otherwise NAs not handled.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

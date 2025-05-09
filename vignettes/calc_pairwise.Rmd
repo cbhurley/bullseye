@@ -100,7 +100,7 @@ pairwise_by(penguins, by="species", pair_cor)
 ```
 Use argument `ungrouped=FALSE` to suppress calculation of the ungrouped scores.
 
-`pairwise_scores` has a `by` argument, and provides pairwise scores for the levels of a grouping variable. 
+The `pairwise_scores` function introduced previously also has a `by` argument, and provides pairwise scores for the levels of a grouping variable. 
 ```{r}
 sc_sex <- pairwise_scores(penguins, by="species")
 ```
@@ -119,10 +119,22 @@ sc_sex <- pairwise_scores(penguins, by="species", control=pc, ungrouped=FALSE)
 ```
 
 
+Both of the functions `pairwise_by` and `pairwise_scores` have an additional argument `add.nobs`. When this is set to TRUE, the pairwise structure
+has an additional column giving the number of observations used in the calculation of each score.
+
+This is potentially useful information in the presence of imbalanced data or with missing values.
 
 
+```{r}
+pairwise_scores(penguins, by="species",add.nobs=TRUE) 
+```
 
+For other `pairwise` constructors, the `n` column can be added by calling the `add_nobs_to_pairwise` function directly:
+```{r}
+pair_cancor(penguins) |>
+  add_nobs_to_pairwise(penguins) |> pull(n)
 
+```
 
 ## Scagnostic measures
 

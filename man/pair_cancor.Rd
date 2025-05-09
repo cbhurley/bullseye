@@ -4,12 +4,14 @@
 \alias{pair_cancor}
 \title{Canonical correlation}
 \usage{
-pair_cancor(d, handle.na = TRUE, ...)
+pair_cancor(d, handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate correlation coefficient,, otherwise NAs not handled.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

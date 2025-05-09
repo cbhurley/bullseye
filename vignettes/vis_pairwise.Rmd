@@ -97,7 +97,12 @@ Pairs of numeric variables exhibit Simpsons paradox if the ungrouped correlation
 The island variable is also associated with the penguin dimension variables.
 However, this is mostly because two of the species (Gentoo and Chinstrap) are located on one island only. For these species, the score values for island  and the  other variables is NA, shown in grey.
 
-
+If the pairwise structure has the additional column `n` for the number of observations in each score calculation,
+the bullseye plot has slices in proportion to `n`. In this display we see there are far fewer Chinstraps than Gentoos or Adelies.
+```{r}
+pairwise_scores(peng, by="species", add.nobs = TRUE)|>
+  plot(interactive=TRUE) 
+```
 
 Multiple pairwise scores also occur when `pairwise` data structures are combined:
 
@@ -130,7 +135,7 @@ With many scores for example with scagnostics, an alternative display is perhaps
 So we offer an alternative plot of the `pairwise` structure:
 
 ```{r, fig.width=5}
-plot(sc, type="linear")
+plot(sc, type="linear", geom="tile")
 ```
 
 The default ordering arranges the variable pairs in order of their maximum score. Here all the high-scoring pairs involve year, which is not surprising as year takes just three distinct values.
@@ -215,15 +220,13 @@ Next, we calculate scores by race and filter those x,y pairs with high values an
 group_scores <- pairwise_scores(acs12, by = "race")
 
 # filtering variable pairs with a range of 0.25 or greater
-rng <- function(vals){
-  if (all(is.na(vals))) 0 else max(vals, na.rm=TRUE)- min(vals,na.rm=TRUE)
-}
 
-mutate(group_scores, valrange = rng(value),valmax = max(abs(value)), .by=c(x,y))|>
+mutate(group_scores, valrange = diff(range(value)),valmax = max(abs(value)), .by=c(x,y))|> 
   filter(valrange > .25 | valmax > .4) |>
   plot(type="linear", geom="point", pair_order = "seriate_max_diff")+ 
    theme(legend.text = element_text(size = rel(.5)), legend.title = element_text(size = rel(.5))
   )
+
 ```
 
 

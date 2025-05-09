@@ -2,6 +2,8 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom colorspace scale_fill_continuous_diverging
+#' @importFrom colorspace scale_fill_continuous_sequential
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 coord_flip
 #' @importFrom ggplot2 coord_polar
@@ -28,5 +30,6 @@
 #' @importFrom stats cancor
 #' @importFrom stats complete.cases
 #' @importFrom stats cor
+#' @importFrom stats na.omit
 ## usethis namespace: end
 NULL

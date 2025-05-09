@@ -4,12 +4,14 @@
 \alias{pair_uncertainty}
 \title{Uncertainty coefficient for association between factors.}
 \usage{
-pair_uncertainty(d, handle.na = TRUE, ...)
+pair_uncertainty(d, handle.na = TRUE, warnings = TRUE, ...)
 }
 \arguments{
 \item{d}{A dataframe}
 
 \item{handle.na}{ignored. Pairwise complete observations are used automatically.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 
 \item{...}{other arguments}
 }

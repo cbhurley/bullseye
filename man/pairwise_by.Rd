@@ -4,7 +4,14 @@
 \alias{pairwise_by}
 \title{Constructs a pairwise result for each level of a by variable.}
 \usage{
-pairwise_by(d, by, pair_fun, ungrouped = TRUE)
+pairwise_by(
+  d,
+  by,
+  pair_fun,
+  ungrouped = TRUE,
+  warnings = TRUE,
+  add.nobs = FALSE
+)
 }
 \arguments{
 \item{d}{a dataframe}
@@ -14,6 +21,10 @@ pairwise_by(d, by, pair_fun, ungrouped = TRUE)
 \item{pair_fun}{A function returning a \code{pairwise} from a dataset.}
 
 \item{ungrouped}{If TRUE calculates the ungrouped score in addition to grouped scores.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
+
+\item{add.nobs}{If TRUE, adds an extra column containing the number of observations used for each score.}
 }
 \value{
 tibble of class "pairwise"

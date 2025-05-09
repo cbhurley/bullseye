@@ -7,10 +7,11 @@
 plot_pairwise_linear(
   scores,
   pair_order = "seriate_max",
-  geom = c("tile", "point"),
+  geom = c("point", "tile"),
   add_lines = FALSE,
   score_limits = NULL,
   na.value = "grey80",
+  pal = "Blue-Red 3",
   interactive = FALSE
 )
 }
@@ -29,6 +30,9 @@ pairs are in order of maximum scores difference.}
 \item{score_limits}{a numeric vector of length specifying the limits of the scale.}
 
 \item{na.value}{used for geom_tile with a value of NA}
+
+\item{pal}{For geom="title" only. If provided, should name a one of the sequential or diverging palettes from package colorspace.
+See \code{\link[colorspace:hcl_palettes]{colorspace::hcl_palettes()}}. Otherwise defaults to a blue-red scheme.}
 
 \item{interactive}{defaults to FALSE}
 }

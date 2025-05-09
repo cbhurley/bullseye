@@ -6,6 +6,8 @@
 #' @param scagnostic a character vector for the scagnostic to be calculated. Subset of "Outlying",
 #' "Stringy", "Striated", "Clumpy", "Sparse", "Skewed", "Convex", "Skinny" or "Monotonic"
 #' @param handle.na If TRUE uses pairwise complete observations.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with  scagnostic values for every numeric variable pair,
@@ -23,16 +25,17 @@
 
 pair_scagnostics <- function(d, scagnostic = c("Outlying","Skewed","Clumpy","Sparse","Striated",
                                         "Convex","Skinny","Stringy","Monotonic"),
-                      handle.na = TRUE, ...) {
+                      handle.na = TRUE, warnings=TRUE, ...) {
   if (!requireNamespace("scagnostics", quietly = TRUE))
     stop("Please install package 'scagnostics' to use pair_scagnostics", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   scag_choices <- c("Outlying","Skewed","Clumpy","Sparse","Striated",
                     "Convex","Skinny","Stringy","Monotonic")
   sel_scag <- match.arg(scagnostic, scag_choices, several.ok=TRUE)
   
   
   d <- dplyr::select(d, dplyr::where(is.numeric))
+  if (warnings) check_constant_var(d)
   scag1 <- pairwise(d, score = sel_scag[1], pair_type = "nn")
   scag <- scag1
   for (s in sel_scag[-1])

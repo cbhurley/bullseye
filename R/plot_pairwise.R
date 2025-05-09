@@ -6,24 +6,30 @@
 #' @param scores The scores for the  matrix plot. Either of class `pairwise` or identical in structure to object of class `pairwise`.
 #' @param var_order The variable order to be used. The default NULL means variables in are ordered alphabetically. A value of  
 #' "seriate_max" means variables are re-ordered to emphasize pairs with maximum abolute scores. A value of "seriate_max_diff" means 
-#' variables are re-ordered to emphasize pairs with maximum score differences. Otherwise Var_order must be a subset of variables in scores.
+#' variables are re-ordered to emphasize pairs with maximum score differences. Otherwise var_order must be a subset of variables in scores.
 #' @param score_limits a numeric vector of length specifying the limits of the scale. 
 #' @param inner_width A number between 0 and 1 specifying radius of the inner bullseye.
 #' @param center_level Specifies which level of group goes into the innter bullseye. Defaults to "all".
 #' @param na.value used for scores with a value of NA
+#' @param pal If provided, should name a one of the sequential or diverging palettes from package colorspace. 
+#' See [colorspace::hcl_palettes()]. Otherwise defaults to a blue-red scheme.
 #' @param interactive defaults to FALSE
 #' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
 #' 
 #' If  scores has one value for x,y pair, then a filled circle is drawn with fill representing the score value. If there are multiple values for each x,y pair then the filled circle is split into wedges, with the wedge fill representing the values. 
 #' If some rows have `group=center_level`, then the glyph is drawn as a bullseye.
+#' If scores has a column `n`, then this is used to weight the slices. See the third example below.
 #' @examples
-#' plot_pairwise(pair_cor(iris))
-#' plot_pairwise(pairwise_scores(iris,by="Species"))
+#' pair_cor(iris) |> plot_pairwise()
+#' pairwise_scores(iris,by="Species") |> plot_pairwise()
+#' pairwise_scores(iris[-(1:30),],by="Species", add.nobs=TRUE) |> plot_pairwise()
+
 
 #' @export
 
 plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL, 
-                          inner_width=.5,center_level="all",na.value = "grey80",interactive=FALSE){
+                          inner_width=.5,center_level="all",na.value = "grey80",
+                          pal ="Blue-Red 3",interactive=FALSE){
   
   check_pairwise(scores)
   prep <- plot_pairwise_prep(scores, score_limits, var_order=var_order)
@@ -44,7 +50,8 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
   scores$y <- factor(scores$y, levels=var_order)
   
   scores2 <- scores
-  names(scores2)[1:2] <- names(scores2)[2:1]
+  names(scores2)[match("x", names(scores))] <- "y"
+  names(scores2)[match("y", names(scores))] <- "x"
   scores <- rbind(scores, scores2)
   
   diag_df <- scores[1:length(var_order),]
@@ -94,9 +101,13 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
                                       tooltip=.data$tooltip), width= inner_width,just=0)
   
   
-  p <- p+ scale_fill_gradient2(low="#2166ac", mid="white", high="#b2182b",
-                               na.value=na.value,limits=score_limits) +
-    scale_color_identity()+ coord_polar(theta="y") +labs(fill = score_label)
+  p <- p+ 
+    {if (pal %in% rownames(colorspace::hcl_palettes("Diverging")) ) 
+      colorspace::scale_fill_continuous_diverging(pal,na.value=na.value,limits=score_limits)
+    else if (pal %in% rownames(colorspace::hcl_palettes("Sequential")))
+      colorspace::scale_fill_continuous_sequential(pal,na.value=na.value,limits=score_limits)
+    else scale_fill_gradient2(low="#2166ac", mid="white", high="#b2182b",na.value=na.value,limits=score_limits)}+
+      scale_color_identity()+ coord_polar(theta="y") +labs(fill = score_label)
   if (interactive) ggiraph::girafe(ggobj=p) else p
   
 }
@@ -165,6 +176,8 @@ plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore
 #' @param add_lines When geom= "point" is used, should the points be connected by lines? Defaults to FALSE.
 #' @param score_limits a numeric vector of length specifying the limits of the scale. 
 #' @param na.value used for geom_tile with a value of NA
+#' @param pal For geom="title" only. If provided, should name a one of the sequential or diverging palettes from package colorspace. 
+#' See [colorspace::hcl_palettes()]. Otherwise defaults to a blue-red scheme.
 #' @param interactive defaults to FALSE
 #' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
 #' 
@@ -179,10 +192,10 @@ plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore
 
 plot_pairwise_linear <- function(scores,
                               pair_order = "seriate_max",
-                              geom = c("tile","point"),
+                              geom = c("point","tile"),
                               add_lines=FALSE,
                               score_limits=NULL, 
-                              na.value = "grey80",
+                              na.value = "grey80",pal ="Blue-Red 3",
                               interactive=FALSE){
   check_pairwise(scores)
   geom <- match.arg(geom)
@@ -216,7 +229,11 @@ plot_pairwise_linear <- function(scores,
     p <- ggplot(scores) +
        ggiraph::geom_tile_interactive(aes(x=.data[[score_label]],y=.data$xy,fill=.data$value,
                                 tooltip=.data$tooltip)) +
-      scale_fill_gradient2(low="#2166ac", mid="white", high="#b2182b",na.value=na.value,limits=score_limits) +
+      {if (pal %in% rownames(colorspace::hcl_palettes("Diverging")) ) 
+        colorspace::scale_fill_continuous_diverging(pal,na.value=na.value,limits=score_limits)
+        else if (pal %in% rownames(colorspace::hcl_palettes("Sequential")))
+          colorspace::scale_fill_continuous_sequential(pal,na.value=na.value,limits=score_limits)
+        else scale_fill_gradient2(low="#2166ac", mid="white", high="#b2182b",na.value=na.value,limits=score_limits)}+
       scale_x_discrete(position = "top", breaks=if (!mscore) NULL else waiver(), expand=c(0,0)) +
       scale_y_discrete(limits=rev, expand=c(0,0)) +
       labs(fill = score_label)+

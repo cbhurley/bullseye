@@ -7,6 +7,7 @@
 #' @param method A character string for the correlation coefficient to be calculated. Either "pearson" (default),
 #'               "spearman", or "kendall". If the value is "all", then all three correlations are calculated.
 #' @param handle.na If TRUE uses pairwise complete observations to calculate correlation coefficient, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with calculated association value for every numeric variable pair, 
@@ -21,9 +22,10 @@
 #' pair_cor(iris, method="all")
 
 
-pair_cor <- function(d, method="pearson", handle.na=TRUE,...){
-  check_df(d)
+pair_cor <- function(d, method="pearson", handle.na=TRUE, warnings=TRUE,...){
+  d <- check_df(d)
   d <- d[, sapply(d, is.numeric), drop=FALSE]
+  if (warnings) check_constant_var(d)
   if (ncol(d) > 1){
     if (method == "all"){
       pearson <- pair_cor(d,method="pearson", handle.na = handle.na)
@@ -40,7 +42,52 @@ pair_cor <- function(d, method="pearson", handle.na=TRUE,...){
 }
 
 
+#' 
+#' Spearman correlation
+#'
+#' Calculates Spearman's correlation for every numeric variable pair in a dataset.
+#'
+#' @param d A dataframe
+#' @param handle.na If TRUE uses pairwise complete observations to calculate correlation coefficient, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+#' @param ... other arguments
+#'
+#' @return A tibble of class `pairwise` with calculated association value for every numeric variable pair,
+#' or NULL if there are not at least two numeric variables
+#' @seealso See \code{\link{pair_methods}}  for other score options.
+#' @export
+#'
+#' @examples
+#' pair_spearman(iris)
+#' # same as
+#' pair_cor(iris, method="spearman")
 
+pair_spearman <- function(d,handle.na=TRUE, warnings=TRUE,...){
+  pair_cor(d, method="spearman", handle.na=handle.na, warnings=warnings, ...)
+}
+
+#' Kendall's correlation
+#'
+#' Calculates Kendall's correlation for every numeric variable pair in a dataset.
+#'
+#' @param d A dataframe
+#' @param handle.na If TRUE uses pairwise complete observations to calculate correlation coefficient, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+#' @param ... other arguments
+#'
+#' @return A tibble of class `pairwise` with calculated association value for every numeric variable pair,
+#' or NULL if there are not at least two numeric variables
+#' @seealso See \code{\link{pair_methods}}  for other score options.
+#' @export
+#'
+#' @examples
+#' pair_kendall(iris)
+#' # same as
+#' pair_cor(iris, method="kendall")
+
+pair_kendall <- function(d,handle.na=TRUE, warnings=TRUE,...){
+  pair_cor(d, method="kendall", handle.na=handle.na, warnings=warnings, ...)
+}
 
 ccor <- function(x,y, handle.na=TRUE){
   if(handle.na){
@@ -70,6 +117,8 @@ ccor <- function(x,y, handle.na=TRUE){
 #'
 #' @param d A dataframe
 #' @param handle.na If TRUE uses pairwise complete observations to calculate correlation coefficient,, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with canonical correlation for every numeric or factor or mixed variable pair
@@ -78,11 +127,11 @@ ccor <- function(x,y, handle.na=TRUE){
 #' @examples
 #' pair_cancor(iris)
 
-pair_cancor <- function(d,handle.na=TRUE,...){
-  check_df(d)
+pair_cancor <- function(d,handle.na=TRUE,warnings=TRUE,...){
+  d <- check_df(d)
   
   d <- d[, sapply(d, function(x) is.numeric(x) | is.factor(x)), drop=FALSE]
-  
+  if (warnings) check_constant_var(d)
   if (ncol(d) > 1){
     a <- pairwise(d, score="cancor")
     fn <- function(x,y){
@@ -102,6 +151,7 @@ pair_cancor <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na If TRUE uses pairwise complete observations to calculate distance correlation, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
 #' @param ... other arguments
 #' @details The distance correlation is calculated using \code{\link[energy]{dcor2d}} from \code{energy} package
 #' @return A tibble of class `pairwise` with distance correlation for every numeric variable pair,
@@ -111,12 +161,13 @@ pair_cancor <- function(d,handle.na=TRUE,...){
 #' @examples
 #' pair_dcor(iris)
 
-pair_dcor <- function(d, handle.na=TRUE,...){
+pair_dcor <- function(d, handle.na=TRUE,warnings=TRUE,...){
   if (!requireNamespace("energy", quietly = TRUE))
     stop("Please install package 'energy' to use pair_dcor", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   d <- d[, sapply(d, is.numeric), drop=FALSE]
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     dcor <- pairwise(d, score="dcor", pair_type = "nn")
     fn <- function(x,y){
@@ -141,7 +192,7 @@ pair_dcor <- function(d, handle.na=TRUE,...){
 # pair_mine <- function(d, method="mic",handle.na=TRUE,...){
 #   if (!requireNamespace("minerva", quietly = TRUE))
 #     stop("Please install package 'minerva' to use pair_mine", call.=FALSE)
-#   check_df(d)
+#   d <- check_df(d)
 #   
 #   d <- d[, sapply(d, is.numeric), drop=FALSE]
 #   if(ncol(d)>1){
@@ -163,6 +214,8 @@ pair_dcor <- function(d, handle.na=TRUE,...){
 #' @param d A dataframe
 #' @param method character vector for the MINE value to be calculated. Subset of "MIC","MAS","MEV","MCN","MICR2", "GMIC",  "TIC"  
 #' @param handle.na If TRUE uses pairwise complete observations to calculate score, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with scores for numeric variable pairs,
@@ -176,12 +229,13 @@ pair_dcor <- function(d, handle.na=TRUE,...){
 #' @references Reshef, David N., et al. "Detecting novel associations in large data sets."
 #' science 334.6062 (2011): 1518-1524
 #' 
-pair_mine <- function(d, method="MIC",handle.na=TRUE,...){
+pair_mine <- function(d, method="MIC",handle.na=TRUE,warnings=TRUE,...){
   if (!requireNamespace("minerva", quietly = TRUE))
     stop("Please install package 'minerva' to use pair_mine", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   d <- d[, sapply(d, is.numeric), drop=FALSE]
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     if (handle.na)
       dcor <- minerva::mine(d,use="pairwise.complete.obs",normalization=TRUE,...)
@@ -206,6 +260,8 @@ pair_mine <- function(d, method="MIC",handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na If TRUE uses pairwise complete observations to calculate normalized mutual information, otherwise NAs not handled.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @details The normalized mutual information is calculated using \code{\link[linkspotter]{maxNMI}} from linkpotter package
@@ -217,11 +273,12 @@ pair_mine <- function(d, method="MIC",handle.na=TRUE,...){
 #'    pair_nmi(iris)
 #' }
 
-pair_nmi <- function(d,handle.na=TRUE,...){
+pair_nmi <- function(d,handle.na=TRUE,warnings=TRUE,...){
   if (!requireNamespace("linkspotter", quietly = TRUE))
     stop("Please install package 'linkspotter' to use pair_nmi",call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   d <- dplyr::select(d, dplyr::where(is.numeric) | dplyr::where(is.factor) )
+  if (warnings) check_constant_var(d)
   if (ncol(d) > 1){
     nmi <- pairwise(d, score="nmi")
     fn <- function(x,y){
@@ -247,6 +304,8 @@ pair_nmi <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with polychoric correlation for factor pairs, 
@@ -260,13 +319,14 @@ pair_nmi <- function(d,handle.na=TRUE,...){
 #' pair_polychor(iris)
 
 
-pair_polychor <- function(d,handle.na=TRUE,...){
+pair_polychor <- function(d,handle.na=TRUE,warnings=TRUE,...){
   # if (!requireNamespace("polychor", quietly = TRUE))
   #   stop("Please install package 'polychor' to use pair_polychor", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   # polychor automatically does pairwise omit
   d <- d[, sapply(d, is.factor), drop=FALSE]
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     pcor <- pairwise(d, score="polychor", pair_type = "ff")
     pcor$value <- mapply(function(x,y) polycor::polychor(d[[x]],d[[y]],...), pcor$x,pcor$y, USE.NAMES = FALSE)
@@ -282,6 +342,8 @@ pair_polychor <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with polyserial correlation for factor-numeric pairs, 
@@ -295,13 +357,14 @@ pair_polychor <- function(d,handle.na=TRUE,...){
 #' pair_polyserial(iris)
 
 
-pair_polyserial <- function(d,handle.na=TRUE,...){
+pair_polyserial <- function(d,handle.na=TRUE,warnings=TRUE,...){
   # if (!requireNamespace("polychor", quietly = TRUE))
   #   stop("Please install package 'polychor' to use pair_polyserial", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   # polychor automatically does pairwise omit
   d <- dplyr::select(d, dplyr::where(is.numeric) | dplyr::where(is.factor) )
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     pser <- pairwise(d, score="polyserial")
     
@@ -323,9 +386,10 @@ pair_polyserial <- function(d,handle.na=TRUE,...){
 
 
 
-pair_tau <- function(d,method="B",handle.na=TRUE,...){
+pair_tau <- function(d,method="B",handle.na=TRUE, warnings=TRUE,...){
   # automatically does pairwise omit for A,B,C
   d <- dplyr::select(d, dplyr::where(is.factor))
+  check_constant_var(d)
   if(ncol(d)>1){
       a <- pairwise(d, score=paste0("tau", method), pair_type = "ff")
       fns <- c("A"= DescTools::KendallTauA, "B"=DescTools::KendallTauB, "C" = DescTools::StuartTauC, "W"=
@@ -352,6 +416,8 @@ pair_tau <- function(d,method="B",handle.na=TRUE,...){
 #' @param d A dataframe
 #' @param ... other arguments
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
 #'
 #' @details Calculated using  \code{\link[DescTools]{KendallTauB}}. Assumes factor levels are in the given order. 
@@ -364,11 +430,11 @@ pair_tau <- function(d,method="B",handle.na=TRUE,...){
 #'                  z=factor(sample(2,20, replace=TRUE)))
 #'  pair_tauB(d)
 
-pair_tauB <- function(d,handle.na=TRUE,...){
+pair_tauB <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_tauB ", call.=FALSE)
-  check_df(d)
-  pair_tau(d, method="B",...)
+  d <- check_df(d)
+  pair_tau(d, method="B", warnings=warnings,...)
 }
 
 #' Kendall's tau  A for association between ordinal factors.
@@ -377,6 +443,8 @@ pair_tauB <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
@@ -390,11 +458,11 @@ pair_tauB <- function(d,handle.na=TRUE,...){
 #'                  z=factor(sample(2,20, replace=TRUE)))
 #'  pair_tauA(d)
 
-pair_tauA <- function(d,handle.na=TRUE,...){
+pair_tauA <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_tauA ", call.=FALSE)
-  check_df(d)
-  pair_tau(d, method="A",...)
+  d <- check_df(d)
+  pair_tau(d, method="A", warnings=warnings,...)
 }
 
 #' Stuarts's tau  C for association between ordinal factors.
@@ -403,6 +471,8 @@ pair_tauA <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#'@param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
@@ -416,11 +486,11 @@ pair_tauA <- function(d,handle.na=TRUE,...){
 #'                  z=factor(sample(2,20, replace=TRUE)))
 #'  pair_tauC(d)
 
-pair_tauC <- function(d,handle.na=TRUE,...){
+pair_tauC <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_tauC ", call.=FALSE)
-  check_df(d)
-  pair_tau(d, method="C")
+  d <- check_df(d)
+  pair_tau(d, method="C", warnings=warnings)
 }
 
 #' Kendall's W for association between ordinal factors.
@@ -429,6 +499,8 @@ pair_tauC <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return  A tibble of class `pairwise` with factor pairs, or NULL if there are not at least two factor variables
@@ -442,11 +514,11 @@ pair_tauC <- function(d,handle.na=TRUE,...){
 #'                  z=factor(sample(2,20, replace=TRUE)))
 #'  pair_tauW(d)
 
-pair_tauW <- function(d,handle.na=TRUE,...){
+pair_tauW <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_tauW ", call.=FALSE)
-  check_df(d)
-  pair_tau(d, method="W")
+  d <- check_df(d)
+  pair_tau(d, method="W",warnings=warnings)
 }
 
 #' Uncertainty coefficient for association between factors.
@@ -455,6 +527,8 @@ pair_tauW <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with every factor variable pair and uncertainty coefficient value,
@@ -468,12 +542,13 @@ pair_tauW <- function(d,handle.na=TRUE,...){
 #' @examples
 #'  pair_uncertainty(iris)
 
-pair_uncertainty <- function(d,handle.na=TRUE,...){
+pair_uncertainty <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_uncertainty", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   d <- dplyr::select(d, dplyr::where(is.factor))
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     a <- pairwise(d, score="uncertainty", pair_type = "ff")
     a$value <- mapply(function(x,y) DescTools::UncertCoef(d[[x]],d[[y]],...), a$x,a$y, USE.NAMES = FALSE)
@@ -489,6 +564,8 @@ pair_uncertainty <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with Goodman Kruskal's Tau for every factor variable pair,
@@ -501,12 +578,13 @@ pair_uncertainty <- function(d,handle.na=TRUE,...){
 #' @examples
 #'  pair_gkTau(iris)
 
-pair_gkTau <- function(d,handle.na=TRUE,...){
+pair_gkTau <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_gkTau", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   d <- dplyr::select(d, dplyr::where(is.factor))
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     a <- pairwise(d, score="gkTau", pair_type = "ff")
     fnlocal <- function(x,y) 
@@ -524,6 +602,8 @@ pair_gkTau <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with factor variable pairs and Goodman Kruskal's Gamma coefficient, 
@@ -537,13 +617,14 @@ pair_gkTau <- function(d,handle.na=TRUE,...){
 #' @examples
 #'  pair_gkGamma(iris)
 
-pair_gkGamma <- function(d,handle.na=TRUE,...){
+pair_gkGamma <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_gkGamma", call.=FALSE)
   
-  check_df(d)
+  d <-  check_df(d)
   
   d <- dplyr::select(d, dplyr::where(is.factor))
+  if (warnings) check_constant_var(d)
   if(ncol(d)>1){
     a <- pairwise(d, score="gkGamma", pair_type = "ff")
     a$value <- mapply(function(x,y) DescTools::GoodmanKruskalGamma(d[[x]],d[[y]],...), a$x,a$y, USE.NAMES = FALSE)
@@ -558,6 +639,8 @@ pair_gkGamma <- function(d,handle.na=TRUE,...){
 #'
 #' @param d A dataframe
 #' @param handle.na ignored. Pairwise complete observations are used automatically.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with calculated Pearson's contingency coefficient for every factor variable
@@ -569,12 +652,13 @@ pair_gkGamma <- function(d,handle.na=TRUE,...){
 #' @examples
 #'  pair_chi(iris)
 
-pair_chi <- function(d,handle.na=TRUE,...){
+pair_chi <- function(d,handle.na=TRUE, warnings=TRUE,...){
   if (!requireNamespace("DescTools", quietly = TRUE))
     stop("Please install package 'DescTools' to use pair_chi", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   
   d <- dplyr::select(d, dplyr::where(is.factor))
+  if (warnings) check_constant_var(d) 
   if(ncol(d)>1){
     a <- pairwise(d, score="chi", pair_type = "ff")
     a$value <- mapply(function(x,y) DescTools::ContCoef(d[[x]],d[[y]],...), a$x,a$y, USE.NAMES = FALSE)
@@ -623,6 +707,8 @@ ace_cor <- function(x,y,handle.na=TRUE) {
 #'
 #' @param d A dataframe
 #' @param handle.na If TRUE uses pairwise complete observations, otherwise NAs not handled.
+#'@param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+
 #' @param ... other arguments
 #'
 #' @return A tibble of class `pairwise` with a maximal correlation  from the alternating conditional expectations
@@ -639,11 +725,12 @@ ace_cor <- function(x,y,handle.na=TRUE) {
 #'
 #' @examples
 #' pair_ace(iris)
-pair_ace <- function(d, handle.na = TRUE, ...) {
+pair_ace <- function(d, handle.na = TRUE, warnings=TRUE,...) {
   if (!requireNamespace("acepack", quietly = TRUE))
     stop("Please install package 'acepack' to use pair_acepack", call.=FALSE)
-  check_df(d)
+  d <- check_df(d)
   d <- dplyr::select(d, dplyr::where(is.numeric) | dplyr::where(is.factor) )
+  if (warnings) check_constant_var(d)
   if (ncol(d) > 1){
     ace_score <- pairwise(d, score = "ace")
     ace_fn <- function(x,y) {
@@ -701,7 +788,9 @@ pair_methods <- dplyr::tribble(
 #' @param by a character string for the name of the conditioning variable.
 #' @param pair_fun A function returning a `pairwise` from a dataset.
 #' @param ungrouped If TRUE calculates the ungrouped score in addition to grouped scores.
-#'
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+#' @param add.nobs If TRUE, adds an extra column containing the number of observations used for each score.
+
 #' @return tibble of class "pairwise"
 #' @export
 #'
@@ -710,13 +799,15 @@ pair_methods <- dplyr::tribble(
 #' 
 #' 
 
-pairwise_by <- function(d, by, pair_fun, ungrouped=TRUE){
-  if (!(by %in% names(d))) cli::cli_abort(c("{.var by} not present in dataset."))
-  tab <- table(d[[by]])
-  if (any(tab == 1)) cli::cli_abort(c("{by} cannot be used as a grouping variable. Need more than one observation at each level."))
+pairwise_by <- function(d, by, pair_fun, ungrouped=TRUE, warnings=TRUE, add.nobs=FALSE){
+  d <- check_df(d)
+  subset_checks(d, by, warnings)
+  if ("warnings" %in% names(formals(pair_fun)))
+    pf <- function(x) pair_fun(x, warnings=warnings)
+  else pf <- pair_fun
   result <- d |>
     dplyr::group_by(.data[[by]]) |>
-    dplyr::group_modify(function(x,y) pair_fun(x)) |>
+    dplyr::group_modify(function(x,y) pf(x)) |>
     dplyr::ungroup() |>
     dplyr::mutate(group=.data[[by]]) |>
     dplyr::select(-dplyr::all_of(by))
@@ -724,8 +815,11 @@ pairwise_by <- function(d, by, pair_fun, ungrouped=TRUE){
   if (ungrouped){
     overall <- d |>
       dplyr::select(-dplyr::all_of(by)) |>
-      pair_fun()
+      pf()
     result <- rbind(result, overall)
   }
-  result |> dplyr::arrange(.data$x, .data$y)
+  if (add.nobs) 
+    result <- add_nobs_to_pairwise(result, d, by= by)
+  result |> dplyr::arrange(.data$x, .data$y) 
+ 
 }

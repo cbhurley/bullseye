@@ -12,6 +12,9 @@
 #'              [`pair_control()`] which calculates Pearson's correlation if the variable pair is numeric,
 #'              canonical correlation for factor or mixed pairs, and polychoric correlation for two ordered factors.
 #' @param handle.na If TRUE uses pairwise complete observations to calculate measure of association.
+#' @param warnings If TRUE, generates a warning for datasets of one row, one column, or with constant variables.
+#' @param add.nobs If TRUE, adds an extra column containing the number of observations used for each score.
+
 #' @details Returns a `pairwise` tibble structure.
 #' @return A tibble with class `pairwise`.
 #'
@@ -44,12 +47,14 @@ pairwise_scores  <- function(d,
                         by=NULL,
                         ungrouped=TRUE,
                         control=pair_control(),
-                        handle.na=TRUE){
+                        handle.na=TRUE,
+                        warnings=TRUE,
+                        add.nobs = FALSE){
 
   
-  check_df(d)
+  d <- check_df(d)
   if(is.null(by)) {
-    
+   if (warnings) check_constant_var(d)
    vartypes <- sapply(names(d), function(u)
       if (is.numeric(d[[u]])) "n"
       else if (is.factor(d[[u]])) "f"
@@ -71,8 +76,8 @@ pairwise_scores  <- function(d,
           dsub <- d[vartypes==utypes[i] | vartypes==utypes[j]]
           if (ncol(dsub)>1 & !is.null(entry$funName)){
             if (is.null(entry$argList))
-            m <- do.call(get(entry$funName), list(dsub, handle.na=handle.na))
-            else m <- do.call(get(entry$funName), list(dsub,  handle.na=handle.na, entry$argList))
+            m <- do.call(get(entry$funName), list(dsub, handle.na=handle.na, warnings=FALSE))
+            else m <- do.call(get(entry$funName), list(dsub,  handle.na=handle.na, warnings=FALSE, entry$argList))
             if (!inherits(m, "pairwise"))
               stop("Calculated pairwise scores must be of type pairwise")
             m <- m[m$pair_type==xy,]
@@ -89,19 +94,17 @@ pairwise_scores  <- function(d,
       ordinals <- which(sapply(d, is.ordered))
       if (length(ordinals) >=2){
         dsub <- d[,ordinals]
-        m <- do.call(get(control$oo), c(list(dsub, handle.na=handle.na),control$ooargs))
+        m <- do.call(get(control$oo), c(list(dsub, handle.na=handle.na, warnings=FALSE),control$ooargs))
         measures<-dplyr::rows_update(measures,m,  by = c("x","y"))
       }
     }
     measures
   } else {
 
-    if (!(by %in% names(d))) cli::cli_abort(c("{.var by} not present in dataset."))
-    tab <- table(d[[by]])
-    if (any(tab == 1)) cli::cli_abort(c("{by} cannot be used as a grouping variable. Need more than one observation at each level."))
+    subset_checks(d, by, warnings)
     result <- d |>
       dplyr::group_by(.data[[by]]) |>
-      dplyr::group_modify(function(x,y) pairwise_scores(x, control=control,handle.na=handle.na)) |>
+      dplyr::group_modify(function(x,y) pairwise_scores(x, control=control,handle.na=handle.na, warnings=FALSE)) |>
       dplyr::ungroup() |>
       dplyr::mutate(group=.data[[by]]) |>
       dplyr::select(-dplyr::all_of(by))
@@ -109,9 +112,11 @@ pairwise_scores  <- function(d,
     if (ungrouped){
       overall <- d |>
         dplyr::select(-dplyr::all_of(by)) |>
-        pairwise_scores(control=control,handle.na=handle.na)
+        pairwise_scores(control=control,handle.na=handle.na, warnings=warnings)
       result <- rbind(result, overall)
     }
+    if (add.nobs) 
+      result <- add_nobs_to_pairwise(result, d, by= by)
     result
 
   }

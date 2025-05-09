@@ -6,17 +6,20 @@
 \usage{
 pairwise_multi(
   d,
-  scores = c("pair_cor", "pair_dcor", "pair_mine", "pair_ace", "pair_cancor", "pair_nmi",
-    "pair_uncertainty", "pair_chi"),
-  handle.na = TRUE
+  scores = c("pair_cor", "pair_spearman", "pair_dcor", "pair_mine", "pair_ace",
+    "pair_cancor", "pair_nmi", "pair_uncertainty", "pair_chi"),
+  handle.na = TRUE,
+  warnings = TRUE
 )
 }
 \arguments{
 \item{d}{dataframe}
 
-\item{scores}{a vector naming functions returning a \code{pairwise} from a dataset.}
+\item{scores}{a character vector naming functions returning a \code{pairwise} from a dataset.}
 
 \item{handle.na}{If TRUE uses pairwise complete observations to calculate pairwise score, otherwise NAs not handled.}
+
+\item{warnings}{If TRUE, generates a warning for datasets of one row, one column, or with constant variables.}
 }
 \value{
 tibble of class "pairwise"
