@@ -11,7 +11,7 @@ variable pair at different levels of the grouping variable are calculated."></he
 
     <a class="navbar-brand me-2" href="../index.html">bullseye</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,9 @@ variable pair at different levels of the grouping variable are calculated.</p>
 <span>  by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ungrouped <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="pair_control.html">pair_control</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  handle.na <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  handle.na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  warnings <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add.nobs <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -85,6 +87,14 @@ canonical correlation for factor or mixed pairs, and polychoric correlation for 
 
 <dt id="arg-handle-na">handle.na<a class="anchor" aria-label="anchor" href="#arg-handle-na"></a></dt>
 <dd><p>If TRUE uses pairwise complete observations to calculate measure of association.</p></dd>
+
+
+<dt id="arg-warnings">warnings<a class="anchor" aria-label="anchor" href="#arg-warnings"></a></dt>
+<dd><p>If TRUE, generates a warning for datasets of one row, one column, or with constant variables.</p></dd>
+
+
+<dt id="arg-add-nobs">add.nobs<a class="anchor" aria-label="anchor" href="#arg-add-nobs"></a></dt>
+<dd><p>If TRUE, adds an extra column containing the number of observations used for each score.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -127,7 +137,7 @@ canonical correlation for factor or mixed pairs, and polychoric correlation for 
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>

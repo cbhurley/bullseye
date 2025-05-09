@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">bullseye</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -637,15 +637,15 @@ below.</p>
 <span><span class="co">#&gt;    x             y              score    group  value pair_type</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> bill_depth_mm bill_length_mm pearson  all   -<span style="color: #BB0000;">0.235</span> nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> bill_depth_mm bill_length_mm dcor     all    0.387 nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> bill_depth_mm bill_length_mm MIC      all    0.313 nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> bill_depth_mm bill_length_mm ace      all    0.585 nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> bill_depth_mm bill_length_mm cancor   all    0.235 nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> bill_depth_mm bill_length_mm nmi      all    0.225 nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> bill_depth_mm bill_length_mm spearman all   -<span style="color: #BB0000;">0.222</span> nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> bill_depth_mm bill_length_mm spearman all   -<span style="color: #BB0000;">0.222</span> nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> bill_depth_mm bill_length_mm dcor     all    0.387 nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> bill_depth_mm bill_length_mm MIC      all    0.313 nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> bill_depth_mm bill_length_mm ace      all    0.585 nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> bill_depth_mm bill_length_mm cancor   all    0.235 nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> bill_depth_mm bill_length_mm nmi      all    0.225 nn       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> bill_depth_mm body_mass_g    pearson  all   -<span style="color: #BB0000;">0.472</span> nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> bill_depth_mm body_mass_g    dcor     all    0.614 nn       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> bill_depth_mm body_mass_g    MIC      all    0.518 nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> bill_depth_mm body_mass_g    spearman all   -<span style="color: #BB0000;">0.432</span> nn       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> bill_depth_mm body_mass_g    dcor     all    0.614 nn       </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 120 more rows</span></span></span>
 <span><span class="va">dcor_nmi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairwise_multi.html">pairwise_multi</a></span><span class="op">(</span><span class="va">penguins</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pair_dcor"</span>, <span class="st">"pair_nmi"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -659,6 +659,10 @@ calculated using <code>dplyr</code> machinery, but it is a bit more
 work.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pairwise_by.html">pairwise_by</a></span><span class="op">(</span><span class="va">penguins</span>, by<span class="op">=</span><span class="st">"species"</span>, <span class="va">pair_cor</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Chinstrap has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Gentoo has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 40 × 6</span></span></span>
 <span><span class="co">#&gt;    x             y                 score   group      value pair_type</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
@@ -675,10 +679,15 @@ work.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 30 more rows</span></span></span></code></pre></div>
 <p>Use argument <code>ungrouped=FALSE</code> to suppress calculation of
 the ungrouped scores.</p>
-<p><code>pairwise_scores</code> has a <code>by</code> argument, and
-provides pairwise scores for the levels of a grouping variable.</p>
+<p>The <code>pairwise_scores</code> function introduced previously also
+has a <code>by</code> argument, and provides pairwise scores for the
+levels of a grouping variable.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sc_sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairwise_scores.html">pairwise_scores</a></span><span class="op">(</span><span class="va">penguins</span>, by<span class="op">=</span><span class="st">"species"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sc_sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairwise_scores.html">pairwise_scores</a></span><span class="op">(</span><span class="va">penguins</span>, by<span class="op">=</span><span class="st">"species"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Chinstrap has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Gentoo has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span></code></pre></div>
 <p>The column <code>group</code> now shows the levels of the grouping
 variable, along with “all” for ungrouped scores. Use
 <code>ungrouped=FALSE</code> to suppress calculation of the ungrouped
@@ -696,7 +705,46 @@ scores.</p>
 this via the <code>control</code> argument:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pair_control.html">pair_control</a></span><span class="op">(</span>nn<span class="op">=</span><span class="st">"pairwise_multi"</span>, nnargs<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pair_dcor"</span>, <span class="st">"pair_ace"</span><span class="op">)</span>, fn<span class="op">=</span><span class="cn">NULL</span>, ff<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">sc_sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairwise_scores.html">pairwise_scores</a></span><span class="op">(</span><span class="va">penguins</span>, by<span class="op">=</span><span class="st">"species"</span>, control<span class="op">=</span><span class="va">pc</span>, ungrouped<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="va">sc_sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pairwise_scores.html">pairwise_scores</a></span><span class="op">(</span><span class="va">penguins</span>, by<span class="op">=</span><span class="st">"species"</span>, control<span class="op">=</span><span class="va">pc</span>, ungrouped<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Chinstrap has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Gentoo has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span></code></pre></div>
+<p>Both of the functions <code>pairwise_by</code> and
+<code>pairwise_scores</code> have an additional argument
+<code>add.nobs</code>. When this is set to TRUE, the pairwise structure
+has an additional column giving the number of observations used in the
+calculation of each score.</p>
+<p>This is potentially useful information in the presence of imbalanced
+data or with missing values.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pairwise_scores.html">pairwise_scores</a></span><span class="op">(</span><span class="va">penguins</span>, by<span class="op">=</span><span class="st">"species"</span>,add.nobs<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Chinstrap has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Gentoo has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 84 × 7</span></span></span>
+<span><span class="co">#&gt;    x                 y      score  group   value pair_type     n</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> island            sex    cancor Adelie 0.016<span style="text-decoration: underline;">4</span> ff          146</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> bill_length_mm    island cancor Adelie 0.083<span style="text-decoration: underline;">8</span> fn          151</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> bill_depth_mm     island cancor Adelie 0.062<span style="text-decoration: underline;">9</span> fn          151</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> flipper_length_mm island cancor Adelie 0.148  fn          151</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> body_mass_g       island cancor Adelie 0.020<span style="text-decoration: underline;">8</span> fn          151</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> bill_length_mm    sex    cancor Adelie 0.590  fn          146</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> bill_depth_mm     sex    cancor Adelie 0.597  fn          146</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> flipper_length_mm sex    cancor Adelie 0.355  fn          146</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> body_mass_g       sex    cancor Adelie 0.738  fn          146</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> island            year   cancor Adelie 0.104  fn          152</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 74 more rows</span></span></span></code></pre></div>
+<p>For other <code>pairwise</code> constructors, the <code>n</code>
+column can be added by calling the <code>add_nobs_to_pairwise</code>
+function directly:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pair_cancor.html">pair_cancor</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/add_nobs_to_pairwise.html">add_nobs_to_pairwise</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] 344 342 342 342 342 333 342 342 342 342 342 342 342 342 342 342 333 333 333</span></span>
+<span><span class="co">#&gt; [20] 333 333 344 344 342 342 342 342 333</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="scagnostic-measures">Scagnostic measures<a class="anchor" aria-label="anchor" href="#scagnostic-measures"></a>
@@ -704,7 +752,7 @@ this via the <code>control</code> argument:</p>
 <p>The package <code>scagnostics</code> provides pairwise variable
 scores based on graph-theoretic interestingness measures, for numeric
 variable pairs only.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pair_scagnostics.html">pair_scagnostics</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, scagnostic<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stringy"</span>, <span class="st">"Clumpy"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
 <span><span class="co">#&gt;   x              y                 score   group  value pair_type</span></span>
@@ -718,8 +766,12 @@ variable pairs only.</p>
 <p>Note that the first two variables of the penguins data are
 non-numeric and so are ignored in the above calculation.</p>
 <p>For group-wise calculation:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pairwise_by.html">pairwise_by</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, by<span class="op">=</span><span class="st">"species"</span>,<span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/pair_scagnostics.html">pair_scagnostics</a></span><span class="op">(</span><span class="va">x</span>, scagnostic<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stringy"</span>, <span class="st">"Clumpy"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Chinstrap has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
+<span><span class="co">#&gt; Warning: Variable island of data for group species = Gentoo has at most one unique</span></span>
+<span><span class="co">#&gt; value, discounting NA.</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 24 × 6</span></span></span>
 <span><span class="co">#&gt;    x             y                 score   group      value pair_type</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
@@ -745,7 +797,7 @@ structure we use in <code>bullseye</code> is more flexible, and is
 amenable to multiple measures of association and grouped measures.</p>
 <p>It is straightforward to convert from a symmetric matrix to
 <code>pairwise</code>:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bill_length_mm"</span>, <span class="st">"bill_depth_mm"</span> ,<span class="st">"flipper_length_mm"</span> ,<span class="st">"body_mass_g"</span><span class="op">)</span><span class="op">]</span>, </span>
 <span>         use<span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/pairwise.html">pairwise</a></span><span class="op">(</span><span class="va">x</span>, score<span class="op">=</span><span class="st">"pearson"</span>, pair_type <span class="op">=</span> <span class="st">"nn"</span><span class="op">)</span></span>
@@ -760,7 +812,7 @@ amenable to multiple measures of association and grouped measures.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> bill_depth_mm  body_mass_g       pearson all   -<span style="color: #BB0000;">0.472</span> nn</span></span></code></pre></div>
 <p>And for the reverse, converting a <code>pairwise</code> to a
 symmetric matrix:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">sc_dcor</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                   bill_depth_mm bill_length_mm body_mass_g flipper_length_mm</span></span>
 <span><span class="co">#&gt; bill_depth_mm                NA     0.38720211   0.6141631         0.7039636</span></span>
@@ -784,7 +836,7 @@ bend or Sheperd’s Pi correlations, distance correlation and more. The
 output data structure is a tidy dataframe with a correlation value and
 correlation tests for variable pairs for which the correlation method is
 defined.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">correlation</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/correlation/reference/correlation.html" class="external-link">correlation</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # Correlation Matrix (pearson-method)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -808,7 +860,7 @@ available via the <code>method</code> argument.</p>
 <p>As there is an <code>as.matrix</code> method provided for the results
 of <code><a href="https://easystats.github.io/correlation/reference/correlation.html" class="external-link">correlation::correlation</a></code>, it is straightforward to
 convert this to a <code>pairwise</code> tibble.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">correlation</span><span class="fu">::</span><span class="fu"><a href="https://easystats.github.io/correlation/reference/correlation.html" class="external-link">correlation</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/pairwise.html">pairwise</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 6</span></span></span>
@@ -837,7 +889,7 @@ convert this to a <code>pairwise</code> tibble.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
