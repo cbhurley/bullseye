@@ -1,3 +1,8 @@
+# bullseye 1.0.1
+
+* adjustments to work with ggplot2 v4
+* added argument diag_label_size to control size of labels in plot_pairwise
+
 # bullseye 1.0.0
 
 * added functions pair_spearman, pair_kendall

@@ -12,6 +12,7 @@ plot_pairwise(
   center_level = "all",
   na.value = "grey80",
   pal = "Blue-Red 3",
+  diag_label_size = 3,
   interactive = FALSE
 )
 }
@@ -32,6 +33,8 @@ variables are re-ordered to emphasize pairs with maximum score differences. Othe
 
 \item{pal}{If provided, should name a one of the sequential or diverging palettes from package colorspace.
 See \code{\link[colorspace:hcl_palettes]{colorspace::hcl_palettes()}}. Otherwise defaults to a blue-red scheme.}
+
+\item{diag_label_size}{used for diagonal variable labels, defaults to 3.}
 
 \item{interactive}{defaults to FALSE}
 }

@@ -13,6 +13,7 @@
 #' @param na.value used for scores with a value of NA
 #' @param pal If provided, should name a one of the sequential or diverging palettes from package colorspace. 
 #' See [colorspace::hcl_palettes()]. Otherwise defaults to a blue-red scheme.
+#' @param diag_label_size used for diagonal variable labels, defaults to 3.
 #' @param interactive defaults to FALSE
 #' @return A `girafe` object if interactive==TRUE, otherwise a `ggplot2`.
 #' 
@@ -29,7 +30,7 @@
 
 plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL, 
                           inner_width=.5,center_level="all",na.value = "grey80",
-                          pal ="Blue-Red 3",interactive=FALSE){
+                          pal ="Blue-Red 3",diag_label_size=3,interactive=FALSE){
   
   check_pairwise(scores)
   prep <- plot_pairwise_prep(scores, score_limits, var_order=var_order)
@@ -68,13 +69,18 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
     scores <- scores[scores$group !=center_level,]
   }
   
+  geom_fn <- if (interactive) ggiraph::geom_bar_interactive 
+  else ggplot2::geom_bar
   
   p <- ggplot(diag_df) +
     facet_grid(ggplot2::vars(.data$x), ggplot2::vars(.data$y)) +
-    geom_text(data=diag_df,aes(x=0.05,y=.5,label=.data$text),size=3)+
+    geom_text(data=diag_df,aes(x=0.05,y=.5,label=.data$text, size=diag_label_size))+
     theme_void()+
     theme(
-      panel.background = element_rect(fill="white", color="grey"),
+      panel.background = element_rect(fill="white", color="grey", linewidth=.5),
+      axis.text.x = element_blank(), axis.text.y = element_blank(),
+      axis.ticks.x = element_blank(), axis.ticks.y = element_blank(),
+      axis.title.x= element_blank(), axis.title.y = element_blank(),
       legend.position = "bottom",
       strip.text.y = element_blank(),
       strip.text.x = element_blank(),
@@ -90,15 +96,16 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
                                  boundaries = dplyr::case_when(.data$ytemp == 1 ~ NA_character_ , .default="grey50"))
   cr <- coord_radial(theta="y",inner.radius=.5, expand=FALSE)
   cr$default<- TRUE
-  p <- p+
-    ggiraph::geom_col_interactive(data=scoreslocal,
+  suppressWarnings( p <- p+
+     geom_fn(data=scoreslocal, stat="identity",
                                   aes(x=inner_width, y=.data$ytemp, fill=.data$value, color=.data$boundaries,
                                       tooltip=.data$tooltip),
                                   width=1- inner_width,just=0)+
     cr+
-    ggiraph::geom_col_interactive(data=bullseyelocal,
-                                  aes(x=0,y=.data$ytemp, fill=.data$value, color=.data$boundaries,
+    geom_fn(data=bullseyelocal, stat="identity",
+            aes(x=0,y=.data$ytemp, fill=.data$value, color=.data$boundaries,
                                       tooltip=.data$tooltip), width= inner_width,just=0)
+    )
   
   
   p <- p+ 
@@ -184,7 +191,7 @@ plot_pairwise_prep <- function(scores, score_limits=NULL, var_order=NULL, ignore
 #' @examples
 #' plot_pairwise_linear(pairwise_scores(iris))
 #' plot_pairwise_linear(pairwise_scores(iris,by="Species"))
-#' plot_pairwise_linear(pairwise_multi(iris), geom="point")
+#' plot_pairwise_linear(pairwise_multi(iris), geom="tile")
 #' @export
 #' 
 
@@ -225,10 +232,12 @@ plot_pairwise_linear <- function(scores,
   if (geom == "tile"){
     levs <- arrange_tiles_x(scores, score_label)
     scores[[score_label]] <- factor(scores[[score_label]], levels=levs)
+    geom_fn <- if (interactive) ggiraph::geom_rect_interactive else ggplot2::geom_tile
     
-    p <- ggplot(scores) +
-       ggiraph::geom_tile_interactive(aes(x=.data[[score_label]],y=.data$xy,fill=.data$value,
-                                tooltip=.data$tooltip)) +
+    suppressWarnings(
+      p <- ggplot(scores) +
+       geom_fn(aes(x=.data[[score_label]],y=.data$xy,fill=.data$value,
+                                tooltip=.data$tooltip), width=1, height=1) +
       {if (pal %in% rownames(colorspace::hcl_palettes("Diverging")) ) 
         colorspace::scale_fill_continuous_diverging(pal,na.value=na.value,limits=score_limits)
         else if (pal %in% rownames(colorspace::hcl_palettes("Sequential")))
@@ -243,14 +252,17 @@ plot_pairwise_linear <- function(scores,
                      axis.text = element_text(size = 8),
                      panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank()
-            )
+            ))
     
   } else {
     mgroup <- length(unique(scores$group)) >1
     if (mgroup) score_label <- "group"
-    p <-  ggplot(scores) +
+    geom_fn <- if (interactive) ggiraph::geom_point_interactive else ggplot2::geom_point
+    
+    suppressWarnings(
+      p <-  ggplot(scores) +
        {if (identical(score_limits, c(-1,1))) geom_hline(yintercept = 0, color="grey40")} +
-      ggiraph::geom_point_interactive(aes(x=.data$xy,y=.data$value,colour=.data[[score_label]], 
+      geom_fn(aes(x=.data$xy,y=.data$value,colour=.data[[score_label]], 
                    tooltip=.data$tooltip),
                    show.legend = mscore) +
       {if (isTRUE(add_lines)) geom_line(aes(x=.data$xy,y=.data$value,colour=.data[[score_label]], group= .data[[score_label]]),
@@ -258,6 +270,7 @@ plot_pairwise_linear <- function(scores,
       ylim(score_limits[1],score_limits[2]) +
       coord_flip() +scale_x_discrete(limits=rev) +
       labs(y = "scores")
+    )
   }
   p <- p+ theme(legend.position="bottom", axis.title.y  = element_blank())
   if (interactive) ggiraph::girafe(ggobj=p) else p
