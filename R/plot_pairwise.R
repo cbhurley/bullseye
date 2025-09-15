@@ -74,7 +74,7 @@ plot_pairwise <- function(scores, var_order="seriate_max", score_limits=NULL,
   
   p <- ggplot(diag_df) +
     facet_grid(ggplot2::vars(.data$x), ggplot2::vars(.data$y)) +
-     geom_text(data=diag_df,aes(x=0.05,y=.5,label=.data$text), size=diag_label_size)+
+     geom_text(data=diag_df,aes(x=0.05,y=.5,label=.data$text),  size=diag_label_size)+
      theme_void()+
     theme(
       panel.background = element_rect(fill="white", color="grey", linewidth=.5),
